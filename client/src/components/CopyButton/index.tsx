@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
+import styles from './CopyButton.module.css';
 
 export default function CopyButton({ text }: { text: string }) {
   const [copied, setCopied] = useState(false);
@@ -13,7 +14,7 @@ export default function CopyButton({ text }: { text: string }) {
   return (
     <button
       type="button"
-      className={`copy-btn ${copied ? 'copied' : ''}`}
+      className={`${styles.copyBtn} ${copied ? styles.copied : ''}`}
       onClick={handleCopy}
     >
       {copied ? (

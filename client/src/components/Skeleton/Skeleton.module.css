@@ -1,0 +1,86 @@
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.07);
+  border-radius: var(--radius-sm);
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.14),
+    transparent
+  );
+  animation: skeletonShimmer 1.3s linear infinite;
+}
+
+@keyframes skeletonShimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.skeletonPage {
+  padding-top: 0.5rem;
+}
+
+.skeletonTitle {
+  height: 30px;
+  width: min(260px, 60vw);
+  margin-bottom: 1.1rem;
+}
+
+.skeletonSubtitle {
+  height: 16px;
+  width: min(420px, 80vw);
+  margin-bottom: 1.2rem;
+}
+
+.skeletonCard {
+  height: 120px;
+  border: 1px solid var(--border-primary);
+  background: var(--surface-primary);
+  border-radius: var(--radius);
+}
+
+.skeletonTable {
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 1rem;
+  background: var(--surface-primary);
+  display: grid;
+  gap: 0.8rem;
+}
+
+.skeletonRow {
+  height: 38px;
+}
+
+.skeletonGrid2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.skeletonGrid3 {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.skeletonInline {
+  height: 14px;
+  width: 100%;
+}
+
+@media (max-width: 768px) {
+  .skeletonGrid2,
+  .skeletonGrid3 {
+    grid-template-columns: 1fr;
+  }
+}

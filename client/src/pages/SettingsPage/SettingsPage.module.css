@@ -1,0 +1,63 @@
+.settingsSection {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-top: 1rem;
+}
+
+.settingsTitle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.settingsDescription {
+  color: var(--text-muted);
+  margin-bottom: 1rem;
+}
+
+.settingsDescription code {
+  background: var(--bg);
+  padding: 0.15rem 0.4rem;
+  border-radius: 4px;
+  font-size: 0.85rem;
+}
+
+.apiKeyCard {
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.apiKeyPreview {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.apiKeyLabel {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.previewCode {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.85rem;
+  color: var(--text);
+}
+
+.apiKeyMeta {
+  color: var(--text-muted);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}
+
+.apiKeyWarning {
+  color: var(--danger);
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+}

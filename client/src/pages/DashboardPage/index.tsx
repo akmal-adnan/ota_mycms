@@ -6,13 +6,19 @@ import {
   useCreateBundleGroup,
   useDeleteBundleGroup,
   useUpdateBundleGroup,
-} from '../hooks/useBundleGroups';
+} from '../../hooks/useBundleGroups';
+import { DashboardTableSkeleton } from '../../components/Skeleton';
+import { getApiErrorMessage } from '../../utils/apiError';
+import { useToastStore } from '../../stores/toastStore';
+import styles from './DashboardPage.module.css';
 
 export default function DashboardPage() {
   const { data: groups, isLoading } = useBundleGroups();
   const createMutation = useCreateBundleGroup();
   const deleteMutation = useDeleteBundleGroup();
   const updateMutation = useUpdateBundleGroup();
+  const addLoadingToast = useToastStore((state) => state.addLoadingToast);
+  const updateToast = useToastStore((state) => state.updateToast);
 
   const [showForm, setShowForm] = useState(false);
   const [name, setName] = useState('');
@@ -20,6 +26,8 @@ export default function DashboardPage() {
 
   const handleCreate = (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const loadingToastId = addLoadingToast('Creating bundle group...');
+
     createMutation.mutate(
       { name, version: parseInt(version, 10) },
       {
@@ -27,6 +35,14 @@ export default function DashboardPage() {
           setName('');
           setVersion('');
           setShowForm(false);
+          updateToast(loadingToastId, 'Bundle group created.', 'success');
+        },
+        onError: (error) => {
+          updateToast(
+            loadingToastId,
+            getApiErrorMessage(error, 'Failed to create group'),
+            'error',
+          );
         },
       },
     );
@@ -38,12 +54,47 @@ export default function DashboardPage() {
         `Delete "${groupName}"? This will remove all uploaded files.`,
       )
     ) {
-      deleteMutation.mutate(id);
+      const loadingToastId = addLoadingToast(`Deleting ${groupName}...`);
+      deleteMutation.mutate(id, {
+        onSuccess: () => {
+          updateToast(loadingToastId, `Deleted ${groupName}.`, 'success');
+        },
+        onError: (error) => {
+          updateToast(
+            loadingToastId,
+            getApiErrorMessage(error, 'Failed to delete group'),
+            'error',
+          );
+        },
+      });
     }
   };
 
   const handleToggleActive = (id: string, currentActive: boolean) => {
-    updateMutation.mutate({ id, updates: { isActive: !currentActive } });
+    const nextActive = !currentActive;
+    const loadingToastId = addLoadingToast(
+      nextActive ? 'Activating group...' : 'Deactivating group...',
+    );
+
+    updateMutation.mutate(
+      { id, updates: { isActive: nextActive } },
+      {
+        onSuccess: () => {
+          updateToast(
+            loadingToastId,
+            nextActive ? 'Group activated.' : 'Group deactivated.',
+            'success',
+          );
+        },
+        onError: (error) => {
+          updateToast(
+            loadingToastId,
+            getApiErrorMessage(error, 'Failed to update group'),
+            'error',
+          );
+        },
+      },
+    );
   };
 
   return (
@@ -56,8 +107,8 @@ export default function DashboardPage() {
       </div>
 
       {showForm && (
-        <form className="create-form" onSubmit={handleCreate}>
-          <div className="form-row">
+        <form className={styles.createForm} onSubmit={handleCreate}>
+          <div className={styles.formRow}>
             <div className="form-group">
               <label htmlFor="groupName">Group Name</label>
               <input
@@ -82,15 +133,6 @@ export default function DashboardPage() {
               />
             </div>
           </div>
-          {createMutation.error && (
-            <div className="alert error">
-              {(
-                createMutation.error as unknown as {
-                  response?: { data?: { error?: string } };
-                }
-              )?.response?.data?.error || 'Failed to create'}
-            </div>
-          )}
           <div className="form-actions">
             <button
               type="submit"
@@ -111,14 +153,14 @@ export default function DashboardPage() {
       )}
 
       {isLoading ? (
-        <p className="loading">Loading...</p>
+        <DashboardTableSkeleton />
       ) : !groups?.length ? (
         <p className="empty">
           No bundle groups yet. Create one to get started.
         </p>
       ) : (
-        <div className="table-wrapper">
-          <table className="bundle-table">
+        <div className={styles.tableWrapper}>
+          <table className={styles.bundleTable}>
             <thead>
               <tr>
                 <th>Name</th>
@@ -134,48 +176,61 @@ export default function DashboardPage() {
               {groups.map((g) => (
                 <tr key={g._id}>
                   <td>
-                    <Link to={`/groups/${g.version}`} className="group-link">
+                    <Link
+                      to={`/groups/${g.version}`}
+                      className={styles.groupLink}
+                    >
                       {g.name}
                     </Link>
                   </td>
                   <td>{g.version}</td>
                   <td>
                     {g.androidBundleUrl ? (
-                      <span className="badge android">Uploaded</span>
+                      <span
+                        className={`${styles.badge} ${styles.badgeAndroid}`}
+                      >
+                        Uploaded
+                      </span>
                     ) : (
-                      <span className="badge empty-badge">—</span>
+                      <span className={`${styles.badge} ${styles.badgeEmpty}`}>
+                        -
+                      </span>
                     )}
                   </td>
                   <td>
                     {g.iosBundleUrl ? (
-                      <span className="badge ios">Uploaded</span>
+                      <span className={`${styles.badge} ${styles.badgeIos}`}>
+                        Uploaded
+                      </span>
                     ) : (
-                      <span className="badge empty-badge">—</span>
+                      <span className={`${styles.badge} ${styles.badgeEmpty}`}>
+                        -
+                      </span>
                     )}
                   </td>
                   <td>
                     <button
-                      className={`toggle-btn ${g.isActive ? 'active' : ''}`}
+                      className={`${styles.toggleBtn} ${g.isActive ? styles.toggleBtnActive : ''}`}
                       onClick={() => handleToggleActive(g._id, g.isActive)}
                       title={g.isActive ? 'Deactivate' : 'Activate'}
                     >
-                      <span className="toggle-track">
-                        <span className="toggle-thumb" />
+                      <span className={styles.toggleTrack}>
+                        <span className={styles.toggleThumb} />
                       </span>
                     </button>
                   </td>
                   <td>{new Date(g.createdAt).toLocaleDateString()}</td>
-                  <td className="row-actions">
+                  <td className={styles.rowActions}>
                     <Link
                       to={`/groups/${g.version}`}
-                      className="action-btn"
+                      className={styles.actionBtn}
                       title="Details"
                     >
                       <ExternalLink size={14} />
                       Details
                     </Link>
                     <button
-                      className="action-btn danger"
+                      className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
                       onClick={() => handleDelete(g._id, g.name)}
                       title="Delete"
                     >

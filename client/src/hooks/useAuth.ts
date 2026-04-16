@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useAuthStore } from '../stores/authStore';
 import { loginApi, signupApi, logoutApi } from '../api/auth';
+import { getApiErrorMessage } from '../utils/apiError';
 
 export function useAuth() {
   const { isAuthenticated, email, login, logout } = useAuthStore();
@@ -14,11 +15,7 @@ export function useAuth() {
       const data = await loginApi(emailInput, password);
       login(data.email);
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { error?: string } } }).response?.data
-              ?.error || 'Login failed'
-          : 'Login failed';
+      const message = getApiErrorMessage(err, 'Login failed');
       setError(message);
     } finally {
       setLoading(false);
@@ -36,11 +33,7 @@ export function useAuth() {
       login(data.email);
       return data.otaApiKey;
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'response' in err
-          ? (err as { response?: { data?: { error?: string } } }).response?.data
-              ?.error || 'Signup failed'
-          : 'Signup failed';
+      const message = getApiErrorMessage(err, 'Signup failed');
       setError(message);
       return null;
     } finally {

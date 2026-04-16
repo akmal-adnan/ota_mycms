@@ -1,0 +1,159 @@
+.createForm {
+  background: var(--surface-primary);
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.formRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.tableWrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  border: 1px solid var(--border-primary);
+  border-radius: var(--radius);
+  background: var(--surface-primary);
+}
+
+.bundleTable {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 700px;
+}
+
+.bundleTable th {
+  text-align: left;
+  padding: 1rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.bundleTable td {
+  padding: 1rem 1rem;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.95rem;
+}
+
+.bundleTable tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.rowActions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.actionBtn {
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 0.35rem 0.6rem;
+  border-radius: 6px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.8rem;
+  line-height: 1;
+  transition:
+    color 0.2s,
+    border-color 0.2s,
+    background 0.2s;
+}
+
+.actionBtn:hover {
+  color: var(--text);
+  border-color: var(--primary);
+}
+
+.actionBtnDanger:hover {
+  color: var(--danger);
+  border-color: rgba(255, 107, 107, 0.6);
+}
+
+.groupLink {
+  font-weight: 500;
+}
+
+.toggleBtn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.2rem;
+  display: inline-flex;
+  align-items: center;
+}
+
+.toggleTrack {
+  display: inline-flex;
+  align-items: center;
+  width: 36px;
+  height: 20px;
+  background: var(--border);
+  border-radius: 99px;
+  padding: 2px;
+  transition: background 0.25s;
+  position: relative;
+}
+
+.toggleBtnActive .toggleTrack {
+  background: var(--success);
+}
+
+.toggleThumb {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
+  transition: transform 0.25s;
+  transform: translateX(0);
+}
+
+.toggleBtnActive .toggleThumb {
+  transform: translateX(16px);
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 99px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+
+.badgeAndroid {
+  background: rgba(61, 220, 132, 0.15);
+  color: var(--android);
+}
+
+.badgeIos {
+  background: rgba(0, 122, 255, 0.15);
+  color: var(--ios);
+}
+
+.badgeEmpty {
+  color: var(--text-muted);
+}
+
+@media (max-width: 768px) {
+  .createForm {
+    padding: 1rem;
+  }
+
+  .formRow {
+    grid-template-columns: 1fr;
+  }
+}

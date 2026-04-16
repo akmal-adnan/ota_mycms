@@ -1,7 +1,8 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate } from 'react-router-dom';
 import { Package, Copy, Check } from 'lucide-react';
-import { useAuth } from '../hooks/useAuth';
+import { useAuth } from '../../hooks/useAuth';
+import styles from './LoginPage.module.css';
 
 export default function LoginPage() {
   const { isAuthenticated, loading, error, handleLogin, handleSignup } =
@@ -33,9 +34,9 @@ export default function LoginPage() {
 
   if (newApiKey) {
     return (
-      <div className="login-page">
-        <div className="login-form">
-          <div className="login-header">
+      <div className={styles.loginPage}>
+        <div className={styles.loginForm}>
+          <div className={styles.loginHeader}>
             <Package size={32} />
             <h1>Account Created!</h1>
             <p>Save your OTA API key now. You won't be able to see it again.</p>
@@ -61,9 +62,9 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="login-page">
-      <form className="login-form" onSubmit={onSubmit}>
-        <div className="login-header">
+    <div className={styles.loginPage}>
+      <form className={styles.loginForm} onSubmit={onSubmit}>
+        <div className={styles.loginHeader}>
           <Package size={32} />
           <h1>OTA Bundle Manager</h1>
           <p>
@@ -109,11 +110,11 @@ export default function LoginPage() {
               ? 'Sign Up'
               : 'Sign In'}
         </button>
-        <p className="auth-toggle">
+        <p className={styles.authToggle}>
           {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
           <button
             type="button"
-            className="link-btn"
+            className={styles.linkBtn}
             onClick={() => setIsSignup(!isSignup)}
           >
             {isSignup ? 'Sign In' : 'Sign Up'}
