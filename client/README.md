@@ -1,73 +1,124 @@
-# React + TypeScript + Vite
+# OTA Manager — Client
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React-based dashboard for managing Over-The-Air (OTA) bundle updates. Upload, version, and distribute Android and iOS bundles through an intuitive dark-themed interface.
 
-Currently, two official plugins are available:
+## Tech Stack
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+| Layer            | Technology                              |
+| ---------------- | --------------------------------------- |
+| Framework        | React 19, TypeScript 6                  |
+| Build            | Vite                                    |
+| Routing          | React Router 7                          |
+| Server State     | TanStack React Query 5                  |
+| Client State     | Zustand 5 (persisted auth store)        |
+| HTTP             | Axios (cookie-based auth)               |
+| UI Primitives    | Radix UI (Dialog, Dropdown, Toast, Tooltip) |
+| Icons            | Lucide React                            |
+| Styling          | CSS Modules + CSS custom properties     |
 
-## React Compiler
+## Getting Started
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js ≥ 18
+- The backend server running on `http://localhost:3001` (or set `API_TARGET`)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Install & Run
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+```bash
+# Install dependencies
+npm install
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+# Start dev server (proxies /api → backend)
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+The app starts at **http://localhost:5173** by default.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Available Scripts
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+| Script          | Description                        |
+| --------------- | ---------------------------------- |
+| `npm run dev`   | Start Vite dev server with HMR     |
+| `npm run build` | Type-check and build for production |
+| `npm run preview` | Preview the production build      |
+| `npm run lint`  | Run ESLint                         |
+
+## Project Structure
+
 ```
+src/
+├── api/           # HTTP client + API endpoint functions
+├── components/    # Reusable UI components
+├── hooks/         # Custom hooks (auth, modal, bundle groups)
+├── lib/           # Shared library setup (React Query client)
+├── navigation/    # Router and route definitions
+├── pages/         # Route-level pages
+├── stores/        # Zustand state stores
+├── styles/        # Global styles and design tokens
+├── types/         # Shared TypeScript types
+└── utils/         # Small utilities (error helpers)
+```
+
+## Routes
+
+| Path              | Page              | Auth Required | Description                         |
+| ----------------- | ----------------- | ------------- | ----------------------------------- |
+| `/login`          | LoginPage         | No            | Login / Signup with API key reveal  |
+| `/`               | DashboardPage     | Yes           | Bundle groups list & stats          |
+| `/groups/:version`| GroupDetailPage    | Yes           | Upload & manage bundles for a group |
+| `/settings`       | SettingsPage      | Yes           | View / regenerate API key           |
+
+## Key Patterns
+
+### Authentication
+
+Cookie-based sessions managed by the backend. The Axios client is configured with `withCredentials: true` and a response interceptor that automatically logs the user out on `401` responses. Auth state is persisted to `localStorage` via Zustand so the UI survives page refreshes.
+
+### Server State & Optimistic Updates
+
+All data fetching uses TanStack React Query with centralized defaults:
+
+- **Stale time:** 30s (queries), 60s (single group)
+- **GC time:** 10 minutes
+- **Retry:** 1 for queries, 0 for mutations
+- **Optimistic updates:** Create, update, and delete mutations optimistically modify the cache and roll back on error.
+
+### Toast Notifications
+
+A global Zustand store powers the notification system:
+
+- Up to **4** toasts on screen at once
+- Variants: `success`, `error`, `info`, `loading`
+- Deduplication within a 1200ms window prevents spam
+- Loading toasts can be updated in-place (e.g., upload progress → success)
+
+### Modal System
+
+The `useModal` hook provides a declarative API for common dialogs:
+
+```tsx
+const modal = useModal();
+
+modal.confirm('Delete this group?', handleDelete, { variant: 'warning' });
+modal.success('API key regenerated');
+modal.error('Upload failed');
+```
+
+### Design System
+
+Dark theme with CSS custom properties defined in `global.css`:
+
+- **Canvas:** `#0D1117` background, `#1C2128` surfaces
+- **Accent:** `#8DC647` brand green, `#6188FF` primary blue
+- **Semantic:** `#16C784` success, `#EA3943` danger, `#F5A623` warning
+- **Platform colors:** `#3DDC84` Android, `#007AFF` iOS
+- **Typography:** DM Sans (UI), JetBrains Mono (code)
+- **Spacing:** 8px grid system
+- **Motion:** 150–250ms transitions with cubic-bezier easing
+
+## Environment Variables
+
+| Variable      | Default                  | Description                          |
+| ------------- | ------------------------ | ------------------------------------ |
+| `API_TARGET`  | `http://localhost:3001`  | Backend server URL for the dev proxy |
