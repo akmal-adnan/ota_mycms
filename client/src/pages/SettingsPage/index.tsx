@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { Copy, Check, RefreshCw, Eye, EyeOff, Key } from 'lucide-react';
+import { Copy, Check, RefreshCw, Eye, EyeOff, Key, Shield } from 'lucide-react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getApiKeyApi, regenerateApiKeyApi } from '../../api/auth';
 import { queryKeys } from '../../lib/queryClient';
@@ -29,13 +29,7 @@ function KeyRevealContent({ apiKey }: { apiKey: string }) {
           {copied ? <Check size={16} /> : <Copy size={16} />}
         </button>
       </div>
-      <p
-        style={{
-          marginTop: '0.75rem',
-          fontSize: '0.875rem',
-          color: 'var(--text-muted)',
-        }}
-      >
+      <p className={styles.keyHint}>
         Copy this key now. You won't be able to see it again.
       </p>
     </div>
@@ -100,27 +94,32 @@ export default function SettingsPage() {
   return (
     <div className="page">
       <div className="page-header">
-        <h2>Account Settings</h2>
+        <h2>Settings</h2>
       </div>
 
-      <div className={styles.settingsSection}>
-        <h3 className={styles.settingsTitle}>
-          <Key size={18} /> OTA API Key
-        </h3>
-        <p className={styles.settingsDescription}>
-          Use this key in your React Native app's <code>x-ota-key</code> header
-          to authenticate bundle update requests.
-        </p>
+      <div className={styles.card}>
+        <div className={styles.cardHeader}>
+          <div className={styles.cardIcon}>
+            <Key size={18} />
+          </div>
+          <div>
+            <h3 className={styles.cardTitle}>OTA API Key</h3>
+            <p className={styles.cardDesc}>
+              Use this key in your React Native app's <code>x-ota-key</code>{' '}
+              header to authenticate bundle update requests.
+            </p>
+          </div>
+        </div>
 
         {isLoading ? (
           <SettingsKeySkeleton />
         ) : isError ? (
           <p className="alert error">Unable to load API key information.</p>
         ) : (
-          <div className={styles.apiKeyCard}>
-            <div className={styles.apiKeyPreview}>
-              <span className={styles.apiKeyLabel}>Current key:</span>
-              <code className={styles.previewCode}>
+          <div className={styles.keyRow}>
+            <div className={styles.keyPreview}>
+              <Shield size={14} className={styles.keyShieldIcon} />
+              <code className={styles.keyCode}>
                 {showPreview ? keyInfo?.keyPreview : '••••••••••••••••'}
               </code>
               <button
@@ -132,23 +131,25 @@ export default function SettingsPage() {
               </button>
             </div>
             {keyInfo?.createdAt ? (
-              <p className={styles.apiKeyMeta}>
-                Created: {new Date(keyInfo.createdAt).toLocaleDateString()}
-              </p>
+              <span className={styles.keyMeta}>
+                Created {new Date(keyInfo.createdAt).toLocaleDateString()}
+              </span>
             ) : null}
           </div>
         )}
 
-        <button
-          className="btn-danger"
-          onClick={handleRegenerate}
-          disabled={regenerateMutation.isPending}
-        >
-          <RefreshCw size={16} />{' '}
-          {regenerateMutation.isPending
-            ? 'Regenerating...'
-            : 'Regenerate API Key'}
-        </button>
+        <div className={styles.cardActions}>
+          <button
+            className="btn-danger"
+            onClick={handleRegenerate}
+            disabled={regenerateMutation.isPending}
+          >
+            <RefreshCw size={16} />
+            {regenerateMutation.isPending
+              ? 'Regenerating...'
+              : 'Regenerate API Key'}
+          </button>
+        </div>
       </div>
 
       {/* Confirmation modal */}

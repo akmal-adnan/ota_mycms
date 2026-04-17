@@ -1,159 +1,375 @@
-.createForm {
-  background: var(--surface-primary);
-  border: 1px solid var(--border-primary);
+/* ── Stats Bar ────────────────────────────── */
+
+.statsBar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-4);
+  margin-bottom: var(--space-8);
+}
+
+.statCard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.statIcon {
+  width: 36px;
+  height: 36px;
   border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  box-shadow: var(--shadow-soft);
+  background: var(--surface-hover);
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.statIconSuccess {
+  background: var(--success-muted);
+  color: var(--success);
+}
+
+.statIconInfo {
+  background: var(--info-muted);
+  color: var(--primary);
+}
+
+.statValue {
+  display: block;
+  font-size: 1.15rem;
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--text);
+}
+
+.statLabel {
+  display: block;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* ── Create Form ──────────────────────────── */
+
+.createForm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
+  margin-bottom: var(--space-6);
 }
 
 .formRow {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
-.tableWrapper {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius);
-  background: var(--surface-primary);
+/* ── Empty State ──────────────────────────── */
+
+.emptyState {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
 }
 
-.bundleTable {
-  width: 100%;
-  border-collapse: collapse;
-  min-width: 700px;
-}
-
-.bundleTable th {
-  text-align: left;
-  padding: 1rem 1rem;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.8rem;
-  text-transform: uppercase;
-  color: var(--text-muted);
-  letter-spacing: 0.05em;
-  white-space: nowrap;
-}
-
-.bundleTable td {
-  padding: 1rem 1rem;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.95rem;
-}
-
-.bundleTable tbody tr:hover {
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
   background: var(--surface-hover);
-}
-
-.rowActions {
+  color: var(--text-subtle);
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  justify-content: center;
+  margin: 0 auto var(--space-5);
 }
 
-.actionBtn {
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
+.emptyState h3 {
+  font-size: 1.1rem;
+  margin-bottom: var(--space-2);
+}
+
+.emptyState p {
   color: var(--text-muted);
-  padding: 0.35rem 0.6rem;
-  border-radius: 6px;
-  cursor: pointer;
+  font-size: 0.9rem;
+  margin-bottom: var(--space-6);
+}
+
+/* ── Table ────────────────────────────────── */
+
+.tableWrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: var(--bg-elevated);
+}
+
+.table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table th:last-child {
+  width: 48px;
+  text-align: center;
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: background var(--motion-fast) var(--ease-out);
+}
+
+.table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Table Cells ──────────────────────────── */
+
+.groupName {
+  font-weight: 600;
+  color: var(--text);
+  text-decoration: none;
+  transition: color var(--motion-fast) var(--ease-out);
+}
+
+.groupName:hover {
+  color: var(--accent);
+}
+
+.versionBadge {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
+  justify-content: center;
+  min-width: 28px;
+  padding: 2px 8px;
+  font-family: 'JetBrains Mono', monospace;
   font-size: 0.8rem;
-  line-height: 1;
-  transition:
-    color 0.2s,
-    border-color 0.2s,
-    background 0.2s;
-}
-
-.actionBtn:hover {
-  color: var(--text);
-  border-color: var(--primary);
-}
-
-.actionBtnDanger:hover {
-  color: var(--danger);
-  border-color: rgba(255, 107, 107, 0.6);
-}
-
-.groupLink {
   font-weight: 500;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
 }
 
-.toggleBtn {
+.platformUploaded {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  border-radius: var(--radius-full);
+  flex-shrink: 0;
+}
+
+.dot[data-color="android"] {
+  background: var(--android);
+  box-shadow: 0 0 6px rgba(61, 220, 132, 0.4);
+}
+
+.dot[data-color="ios"] {
+  background: var(--ios);
+  box-shadow: 0 0 6px rgba(0, 122, 255, 0.4);
+}
+
+.platformEmpty {
+  color: var(--text-subtle);
+  font-size: 0.82rem;
+}
+
+.dateCell {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* ── Toggle ───────────────────────────────── */
+
+.toggle {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0.2rem;
+  padding: 2px;
   display: inline-flex;
   align-items: center;
+  gap: var(--space-2);
 }
 
 .toggleTrack {
   display: inline-flex;
   align-items: center;
-  width: 36px;
-  height: 20px;
+  width: 34px;
+  height: 18px;
   background: var(--border);
-  border-radius: 99px;
+  border-radius: var(--radius-full);
   padding: 2px;
-  transition: background 0.25s;
+  transition: background var(--motion-mid) var(--ease-out);
   position: relative;
 }
 
-.toggleBtnActive .toggleTrack {
+.toggleActive .toggleTrack {
   background: var(--success);
 }
 
 .toggleThumb {
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
   background: #fff;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);
-  transition: transform 0.25s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform var(--motion-mid) var(--ease-out);
   transform: translateX(0);
 }
 
-.toggleBtnActive .toggleThumb {
+.toggleActive .toggleThumb {
   transform: translateX(16px);
 }
 
-.badge {
-  display: inline-block;
-  padding: 0.15rem 0.5rem;
-  border-radius: 99px;
-  font-size: 0.7rem;
-  font-weight: 600;
-  letter-spacing: 0.03em;
+.toggleLabel {
+  font-size: 0.78rem;
+  color: var(--text-subtle);
 }
 
-.badgeAndroid {
-  background: rgba(61, 220, 132, 0.15);
-  color: var(--android);
+.toggleActive .toggleLabel {
+  color: var(--success);
 }
 
-.badgeIos {
-  background: rgba(0, 122, 255, 0.15);
-  color: var(--ios);
+/* ── Row Actions Dropdown ─────────────────── */
+
+.moreBtn {
+  background: none;
+  border: none;
+  color: var(--text-subtle);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition:
+    color var(--motion-fast) var(--ease-out),
+    background var(--motion-fast) var(--ease-out);
 }
 
-.badgeEmpty {
+.moreBtn:hover {
+  color: var(--text);
+  background: var(--surface-active);
+}
+
+.rowDropdown {
+  min-width: 160px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-1);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  animation: dropIn var(--motion-fast) var(--ease-out);
+}
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.rowDropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
   color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  text-decoration: none;
+  outline: none;
+  transition:
+    background var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
+}
+
+.rowDropdownItem:hover,
+.rowDropdownItem[data-highlighted] {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.rowDropdownDanger:hover,
+.rowDropdownDanger[data-highlighted] {
+  color: var(--danger);
+  background: var(--danger-muted);
+}
+
+.rowDropdownSep {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-1) 0;
+}
+
+/* ── Responsive ───────────────────────────── */
+
+@media (max-width: 1024px) {
+  .statsBar {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 @media (max-width: 768px) {
+  .statsBar {
+    grid-template-columns: 1fr;
+  }
+
   .createForm {
-    padding: 1rem;
+    padding: var(--space-4);
   }
 
   .formRow {
     grid-template-columns: 1fr;
+  }
+
+  .tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    min-width: 680px;
   }
 }

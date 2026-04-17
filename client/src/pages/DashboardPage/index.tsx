@@ -1,6 +1,16 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Trash2, ExternalLink } from 'lucide-react';
+import {
+  Plus,
+  Trash2,
+  ExternalLink,
+  Layers,
+  Activity,
+  Smartphone,
+  MoreHorizontal,
+  X,
+} from 'lucide-react';
+import * as DropdownMenu from '@radix-ui/react-dropdown-menu';
 import {
   useBundleGroups,
   useCreateBundleGroup,
@@ -97,15 +107,70 @@ export default function DashboardPage() {
     );
   };
 
+  // Stats
+  const totalGroups = groups?.length ?? 0;
+  const activeGroups = groups?.filter((g) => g.isActive).length ?? 0;
+  const bothPlatforms =
+    groups?.filter((g) => g.androidBundleUrl && g.iosBundleUrl).length ?? 0;
+  const latestDate = groups?.length
+    ? new Date(
+        Math.max(...groups.map((g) => new Date(g.createdAt).getTime())),
+      ).toLocaleDateString()
+    : '—';
+
   return (
     <div className="page">
       <div className="page-header">
         <h2>Bundle Groups</h2>
         <button className="btn-primary" onClick={() => setShowForm(!showForm)}>
-          <Plus size={16} /> New Group
+          {showForm ? <X size={16} /> : <Plus size={16} />}
+          {showForm ? 'Cancel' : 'New Group'}
         </button>
       </div>
 
+      {/* ── Stats Bar ─────────────────────── */}
+      {!isLoading && groups && groups.length > 0 && (
+        <div className={styles.statsBar}>
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Layers size={16} />
+            </div>
+            <div>
+              <span className={styles.statValue}>{totalGroups}</span>
+              <span className={styles.statLabel}>Total Groups</span>
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.statIconSuccess}`}>
+              <Activity size={16} />
+            </div>
+            <div>
+              <span className={styles.statValue}>{activeGroups}</span>
+              <span className={styles.statLabel}>Active</span>
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={`${styles.statIcon} ${styles.statIconInfo}`}>
+              <Smartphone size={16} />
+            </div>
+            <div>
+              <span className={styles.statValue}>{bothPlatforms}</span>
+              <span className={styles.statLabel}>Both Platforms</span>
+            </div>
+          </div>
+          <div className={styles.statCard}>
+            <div className={styles.statIcon}>
+              <Plus size={16} />
+            </div>
+            <div>
+              <span className={styles.statValue}>{latestDate}</span>
+              <span className={styles.statLabel}>Latest Created</span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Create Form ───────────────────── */}
       {showForm && (
         <form className={styles.createForm} onSubmit={handleCreate}>
           <div className={styles.formRow}>
@@ -152,24 +217,32 @@ export default function DashboardPage() {
         </form>
       )}
 
+      {/* ── Table ─────────────────────────── */}
       {isLoading ? (
         <DashboardTableSkeleton />
       ) : !groups?.length ? (
-        <p className="empty">
-          No bundle groups yet. Create one to get started.
-        </p>
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>
+            <Layers size={32} />
+          </div>
+          <h3>No bundle groups yet</h3>
+          <p>Create your first bundle group to get started with OTA updates.</p>
+          <button className="btn-primary" onClick={() => setShowForm(true)}>
+            <Plus size={16} /> Create First Group
+          </button>
+        </div>
       ) : (
         <div className={styles.tableWrapper}>
-          <table className={styles.bundleTable}>
+          <table className={styles.table}>
             <thead>
               <tr>
                 <th>Name</th>
-                <th>Bundle Version</th>
+                <th>Version</th>
                 <th>Android</th>
                 <th>iOS</th>
-                <th>Active</th>
+                <th>Status</th>
                 <th>Created</th>
-                <th>Actions</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
@@ -178,65 +251,86 @@ export default function DashboardPage() {
                   <td>
                     <Link
                       to={`/groups/${g.version}`}
-                      className={styles.groupLink}
+                      className={styles.groupName}
                     >
                       {g.name}
                     </Link>
                   </td>
-                  <td>{g.version}</td>
+                  <td>
+                    <span className={styles.versionBadge}>{g.version}</span>
+                  </td>
                   <td>
                     {g.androidBundleUrl ? (
-                      <span
-                        className={`${styles.badge} ${styles.badgeAndroid}`}
-                      >
+                      <span className={styles.platformUploaded}>
+                        <span className={styles.dot} data-color="android" />
                         Uploaded
                       </span>
                     ) : (
-                      <span className={`${styles.badge} ${styles.badgeEmpty}`}>
-                        -
-                      </span>
+                      <span className={styles.platformEmpty}>—</span>
                     )}
                   </td>
                   <td>
                     {g.iosBundleUrl ? (
-                      <span className={`${styles.badge} ${styles.badgeIos}`}>
+                      <span className={styles.platformUploaded}>
+                        <span className={styles.dot} data-color="ios" />
                         Uploaded
                       </span>
                     ) : (
-                      <span className={`${styles.badge} ${styles.badgeEmpty}`}>
-                        -
-                      </span>
+                      <span className={styles.platformEmpty}>—</span>
                     )}
                   </td>
                   <td>
                     <button
-                      className={`${styles.toggleBtn} ${g.isActive ? styles.toggleBtnActive : ''}`}
+                      className={`${styles.toggle} ${g.isActive ? styles.toggleActive : ''}`}
                       onClick={() => handleToggleActive(g._id, g.isActive)}
                       title={g.isActive ? 'Deactivate' : 'Activate'}
                     >
                       <span className={styles.toggleTrack}>
                         <span className={styles.toggleThumb} />
                       </span>
+                      <span className={styles.toggleLabel}>
+                        {g.isActive ? 'Active' : 'Inactive'}
+                      </span>
                     </button>
                   </td>
-                  <td>{new Date(g.createdAt).toLocaleDateString()}</td>
-                  <td className={styles.rowActions}>
-                    <Link
-                      to={`/groups/${g.version}`}
-                      className={styles.actionBtn}
-                      title="Details"
-                    >
-                      <ExternalLink size={14} />
-                      Details
-                    </Link>
-                    <button
-                      className={`${styles.actionBtn} ${styles.actionBtnDanger}`}
-                      onClick={() => handleDelete(g._id, g.name)}
-                      title="Delete"
-                    >
-                      <Trash2 size={14} />
-                      Delete
-                    </button>
+                  <td className={styles.dateCell}>
+                    {new Date(g.createdAt).toLocaleDateString()}
+                  </td>
+                  <td>
+                    <DropdownMenu.Root>
+                      <DropdownMenu.Trigger asChild>
+                        <button className={styles.moreBtn} title="Actions">
+                          <MoreHorizontal size={16} />
+                        </button>
+                      </DropdownMenu.Trigger>
+                      <DropdownMenu.Portal>
+                        <DropdownMenu.Content
+                          className={styles.rowDropdown}
+                          sideOffset={4}
+                          align="end"
+                        >
+                          <DropdownMenu.Item asChild>
+                            <Link
+                              to={`/groups/${g.version}`}
+                              className={styles.rowDropdownItem}
+                            >
+                              <ExternalLink size={14} />
+                              View Details
+                            </Link>
+                          </DropdownMenu.Item>
+                          <DropdownMenu.Separator
+                            className={styles.rowDropdownSep}
+                          />
+                          <DropdownMenu.Item
+                            className={`${styles.rowDropdownItem} ${styles.rowDropdownDanger}`}
+                            onSelect={() => handleDelete(g._id, g.name)}
+                          >
+                            <Trash2 size={14} />
+                            Delete
+                          </DropdownMenu.Item>
+                        </DropdownMenu.Content>
+                      </DropdownMenu.Portal>
+                    </DropdownMenu.Root>
                   </td>
                 </tr>
               ))}

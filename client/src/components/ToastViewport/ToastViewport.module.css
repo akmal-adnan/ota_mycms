@@ -1,57 +1,60 @@
 .toastViewport {
   position: fixed;
-  right: 1.1rem;
-  bottom: 1.1rem;
-  z-index: 35;
+  right: var(--space-4);
+  bottom: var(--space-4);
+  z-index: 200;
   display: grid;
-  gap: 0.65rem;
-  width: min(360px, calc(100vw - 2rem));
+  gap: var(--space-2);
+  width: min(380px, calc(100vw - 2rem));
 }
 
 .toast {
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius);
-  background: rgba(13, 21, 34, 0.96);
-  box-shadow: var(--shadow-card);
-  padding: 1.72rem 1.78rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-3) var(--space-4);
   display: grid;
   grid-template-columns: auto 1fr auto;
-  align-items: start;
-  gap: 0.55rem;
-  animation: toastIn 180ms var(--ease-out) both;
+  align-items: center;
+  gap: var(--space-3);
+  animation: toastIn var(--motion-mid) var(--ease-out) both;
 }
 
 .toastMessage {
-  color: var(--text-primary);
-  font-size: 0.86rem;
+  color: var(--text);
+  font-size: 0.85rem;
   line-height: 1.45;
-  margin-top: 0.02rem;
 }
 
 .toastIcon {
-  color: var(--text-secondary);
+  color: var(--text-muted);
   display: inline-flex;
   align-items: center;
-  margin-top: 0.1rem;
 }
 
 .toastClose {
   background: none;
   border: none;
-  color: var(--text-secondary);
+  color: var(--text-subtle);
   cursor: pointer;
-  padding: 0.18rem;
-  border-radius: 4px;
+  padding: 4px;
+  border-radius: var(--radius-sm);
   line-height: 1;
+  transition:
+    color var(--motion-fast) var(--ease-out),
+    background var(--motion-fast) var(--ease-out);
 }
 
 .toastClose:hover {
-  color: var(--text-primary);
-  background: rgba(255, 255, 255, 0.08);
+  color: var(--text);
+  background: var(--surface-hover);
 }
 
+/* ── Variants ─────────────────────────────── */
+
 .toastSuccess {
-  border-color: rgba(91, 216, 158, 0.35);
+  border-color: rgba(22, 199, 132, 0.3);
 }
 
 .toastSuccess .toastIcon {
@@ -59,7 +62,7 @@
 }
 
 .toastError {
-  border-color: rgba(255, 124, 124, 0.42);
+  border-color: rgba(234, 57, 67, 0.35);
 }
 
 .toastError .toastIcon {
@@ -67,7 +70,7 @@
 }
 
 .toastInfo {
-  border-color: rgba(126, 166, 255, 0.4);
+  border-color: rgba(97, 136, 255, 0.3);
 }
 
 .toastInfo .toastIcon {
@@ -75,7 +78,7 @@
 }
 
 .toastLoading {
-  border-color: rgba(157, 232, 210, 0.35);
+  border-color: rgba(141, 198, 71, 0.3);
 }
 
 .toastLoading .toastIcon {
@@ -86,28 +89,21 @@
   animation: toastSpin 900ms linear infinite;
 }
 
+/* ── Animations ───────────────────────────── */
+
 @keyframes toastIn {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(8px) scale(0.96);
   }
   to {
     opacity: 1;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
   }
 }
 
 @keyframes toastSpin {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 768px) {
-  .toastViewport {
-    right: 0.75rem;
-    left: 0.75rem;
-    width: auto;
-    bottom: 0.8rem;
   }
 }

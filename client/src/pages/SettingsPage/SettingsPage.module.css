@@ -1,63 +1,109 @@
-.settingsSection {
-  background: var(--surface-primary);
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius);
-  padding: 1.5rem;
-  margin-top: 1rem;
+/* ── Card ─────────────────────────────────── */
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-6);
 }
 
-.settingsTitle {
+.cardHeader {
+  display: flex;
+  gap: var(--space-4);
+  margin-bottom: var(--space-5);
+}
+
+.cardIcon {
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-
-.settingsDescription {
-  color: var(--text-muted);
-  margin-bottom: 1rem;
-}
-
-.settingsDescription code {
-  background: var(--bg);
-  padding: 0.15rem 0.4rem;
-  border-radius: 4px;
-  font-size: 0.85rem;
-}
-
-.apiKeyCard {
-  background: var(--surface-secondary);
-  border: 1px solid var(--border-primary);
+  justify-content: center;
   border-radius: var(--radius);
-  padding: 1rem;
-  margin-bottom: 1rem;
+  background: var(--accent-muted);
+  color: var(--accent);
+  flex-shrink: 0;
 }
 
-.apiKeyPreview {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
+.cardTitle {
+  font-size: 1.05rem;
+  font-weight: 600;
+  margin-bottom: var(--space-1);
 }
 
-.apiKeyLabel {
+.cardDesc {
   color: var(--text-muted);
-  white-space: nowrap;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
-.previewCode {
+.cardDesc code {
   font-family: 'JetBrains Mono', monospace;
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  padding: 2px 6px;
+  background: var(--surface-hover);
+  border-radius: var(--radius-sm);
   color: var(--text);
 }
 
-.apiKeyMeta {
-  color: var(--text-muted);
-  font-size: 0.85rem;
-  margin-top: 0.5rem;
+/* ── Key Preview ──────────────────────────── */
+
+.keyRow {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  margin-bottom: var(--space-5);
 }
 
-.apiKeyWarning {
-  color: var(--danger);
+.keyPreview {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.keyShieldIcon {
+  color: var(--text-subtle);
+  flex-shrink: 0;
+}
+
+.keyCode {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.9rem;
+  flex: 1;
+  color: var(--text);
+  letter-spacing: 0.03em;
+}
+
+.keyMeta {
+  display: block;
+  margin-top: var(--space-3);
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+}
+
+.keyHint {
+  margin-top: var(--space-3);
   font-size: 0.85rem;
-  margin-top: 0.5rem;
+  color: var(--text-muted);
+}
+
+/* ── Actions ──────────────────────────────── */
+
+.cardActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ── Responsive ───────────────────────────── */
+
+@media (max-width: 600px) {
+  .card {
+    padding: var(--space-4);
+  }
+
+  .cardHeader {
+    flex-direction: column;
+  }
 }

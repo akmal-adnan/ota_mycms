@@ -1,169 +1,249 @@
-/* Layout */
+/* ── Layout Shell ─────────────────────────── */
+
 .layout {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
 }
 
-.appHeader {
-  background: linear-gradient(
-    180deg,
-    rgba(23, 33, 51, 0.92) 0%,
-    rgba(16, 24, 39, 0.88) 100%
-  );
-  border-bottom: 1px solid rgba(126, 166, 255, 0.2);
-  backdrop-filter: blur(12px);
-  padding: 0 clamp(1rem, 4vw, 3rem);
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+/* ── Header / Navbar ──────────────────────── */
+
+.header {
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
   position: sticky;
   top: 0;
-  z-index: 10;
-  gap: 1rem;
+  z-index: 50;
 }
 
-.headerLeft {
+.headerInner {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 var(--space-6);
+  height: 56px;
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+}
+
+/* ── Brand ────────────────────────────────── */
+
+.brand {
   display: flex;
   align-items: center;
   gap: var(--space-3);
+  color: var(--text);
+  text-decoration: none;
   flex-shrink: 0;
 }
 
-.headerLeft svg {
-  color: var(--primary);
+.brand:hover {
+  color: var(--text);
 }
 
-.headerTitle {
-  font-size: 1.25rem;
-  font-weight: 600;
-  white-space: nowrap;
-}
-
-.navLinks {
+.logoMark {
+  width: 32px;
+  height: 32px;
+  border-radius: var(--radius);
+  background: linear-gradient(135deg, var(--accent), #6ab82e);
   display: flex;
-  gap: var(--space-4);
+  align-items: center;
+  justify-content: center;
+  color: #0D1117;
 }
 
-.navLink {
-  color: var(--text-secondary);
-  font-size: 0.84rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 0.5rem 0.65rem;
+.brandName {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* ── Navigation ───────────────────────────── */
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1;
+}
+
+.navItem {
+  position: relative;
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: var(--space-4) var(--space-3);
+  text-decoration: none;
+  transition: color var(--motion-fast) var(--ease-out);
+}
+
+.navItem:hover {
+  color: var(--text);
+}
+
+.navItemActive {
+  color: var(--text);
+}
+
+.navItemActive::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: var(--space-3);
+  right: var(--space-3);
+  height: 2px;
+  background: var(--accent);
+  border-radius: 1px 1px 0 0;
+}
+
+/* ── User Menu ────────────────────────────── */
+
+.userBtn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  background: none;
   border: 1px solid transparent;
-  border-radius: 999px;
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
+  border-radius: var(--radius);
+  padding: 4px 8px 4px 4px;
+  cursor: pointer;
+  color: var(--text-muted);
   transition:
-    color var(--motion-fast) var(--ease-out),
-    border-color var(--motion-fast) var(--ease-out),
-    background-color var(--motion-fast) var(--ease-out);
+    background var(--motion-fast) var(--ease-out),
+    border-color var(--motion-fast) var(--ease-out);
 }
 
-.navLink:hover,
-.active {
-  color: var(--text-primary);
-  background: rgba(126, 166, 255, 0.12);
-  border-color: rgba(126, 166, 255, 0.35);
+.userBtn:hover {
+  background: var(--surface-hover);
+  border-color: var(--border);
 }
 
-.headerRight {
+.avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-full);
+  background: var(--surface-active);
+  color: var(--text-muted);
+  font-size: 0.7rem;
+  font-weight: 600;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
-  flex-shrink: 0;
+  justify-content: center;
+  letter-spacing: 0.03em;
 }
 
 .userEmail {
-  color: var(--text-secondary);
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  max-width: 160px;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  max-width: 180px;
 }
 
-.btnLogout {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid var(--border-primary);
-  color: var(--text-secondary);
-  padding: 0.45rem 0.9rem;
-  border-radius: var(--radius);
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  transition:
-    color var(--motion-fast) var(--ease-out),
-    border-color var(--motion-fast) var(--ease-out),
-    background-color var(--motion-fast) var(--ease-out);
+.chevron {
+  opacity: 0.5;
+}
+
+/* ── Dropdown ─────────────────────────────── */
+
+.dropdown {
+  min-width: 200px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2);
+  box-shadow: var(--shadow-lg);
+  z-index: 100;
+  animation: dropdownIn var(--motion-fast) var(--ease-out);
+}
+
+@keyframes dropdownIn {
+  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
+  to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.dropdownLabel {
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.btnLogout:hover {
-  color: var(--danger);
-  border-color: rgba(255, 124, 124, 0.55);
-  background: rgba(255, 124, 124, 0.08);
+.dropdownSep {
+  height: 1px;
+  background: var(--border);
+  margin: var(--space-1) 0;
 }
 
-.appContent {
+.dropdownItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-2) var(--space-3);
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition:
+    background var(--motion-fast) var(--ease-out),
+    color var(--motion-fast) var(--ease-out);
+  text-decoration: none;
+  outline: none;
+}
+
+.dropdownItem:hover,
+.dropdownItem[data-highlighted] {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+
+.dropdownItemDanger:hover,
+.dropdownItemDanger[data-highlighted] {
+  color: var(--danger);
+  background: var(--danger-muted);
+}
+
+/* ── Main Content ─────────────────────────── */
+
+.main {
   flex: 1;
   width: 100%;
-  max-width: 1200px;
+  max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem clamp(1.5rem, 5vw, 4rem);
-  animation: fadeUp var(--motion-mid) var(--ease-out) both;
+  padding: var(--space-8) var(--space-6);
 }
 
-@keyframes fadeUp {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
+/* ── Responsive ───────────────────────────── */
 
 @media (max-width: 768px) {
-  .appHeader {
-    padding: 0 1rem;
-    height: auto;
-    min-height: 56px;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    padding-top: 0.5rem;
-    padding-bottom: 0.5rem;
+  .headerInner {
+    padding: 0 var(--space-4);
+    gap: var(--space-4);
   }
 
-  .headerTitle {
-    font-size: 0.95rem;
-  }
-
-  .navLinks {
-    order: 3;
-    width: 100%;
-    border-top: 1px solid var(--border);
-    padding-top: 0.4rem;
-    gap: 1rem;
+  .brandName {
+    display: none;
   }
 
   .userEmail {
     display: none;
   }
 
-  .appContent {
-    padding: 1.25rem 1rem;
+  .main {
+    padding: var(--space-5) var(--space-4);
   }
 }
 
 @media (max-width: 480px) {
-  .btnLogout span {
-    display: none;
+  .headerInner {
+    height: 48px;
+  }
+
+  .navItem {
+    font-size: 0.82rem;
+    padding: var(--space-3) var(--space-2);
   }
 }

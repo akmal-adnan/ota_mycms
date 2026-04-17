@@ -1,7 +1,7 @@
 .skeleton {
   position: relative;
   overflow: hidden;
-  background: rgba(255, 255, 255, 0.07);
+  background: var(--surface-hover);
   border-radius: var(--radius-sm);
 }
 
@@ -13,48 +13,46 @@
   background: linear-gradient(
     90deg,
     transparent,
-    rgba(255, 255, 255, 0.14),
+    rgba(255, 255, 255, 0.06),
     transparent
   );
   animation: skeletonShimmer 1.3s linear infinite;
 }
 
 @keyframes skeletonShimmer {
-  100% {
-    transform: translateX(100%);
-  }
+  100% { transform: translateX(100%); }
 }
 
 .skeletonPage {
-  padding-top: 0.5rem;
+  padding-top: var(--space-2);
 }
 
 .skeletonTitle {
   height: 30px;
   width: min(260px, 60vw);
-  margin-bottom: 1.1rem;
+  margin-bottom: var(--space-4);
 }
 
 .skeletonSubtitle {
   height: 16px;
   width: min(420px, 80vw);
-  margin-bottom: 1.2rem;
+  margin-bottom: var(--space-5);
 }
 
 .skeletonCard {
   height: 120px;
-  border: 1px solid var(--border-primary);
-  background: var(--surface-primary);
-  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  border-radius: var(--radius-lg);
 }
 
 .skeletonTable {
-  border: 1px solid var(--border-primary);
-  border-radius: var(--radius);
-  padding: 1rem;
-  background: var(--surface-primary);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+  background: var(--surface);
   display: grid;
-  gap: 0.8rem;
+  gap: var(--space-3);
 }
 
 .skeletonRow {
@@ -64,23 +62,16 @@
 .skeletonGrid2 {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .skeletonGrid3 {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 1rem;
+  gap: var(--space-4);
 }
 
 .skeletonInline {
   height: 14px;
   width: 100%;
-}
-
-@media (max-width: 768px) {
-  .skeletonGrid2,
-  .skeletonGrid3 {
-    grid-template-columns: 1fr;
-  }
 }

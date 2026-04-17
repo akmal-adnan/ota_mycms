@@ -1,6 +1,14 @@
 import { useState, type FormEvent } from 'react';
 import { Navigate } from 'react-router-dom';
-import { Package, Copy, Check } from 'lucide-react';
+import {
+  Layers,
+  Copy,
+  Check,
+  ArrowRight,
+  Zap,
+  Shield,
+  Globe,
+} from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 import styles from './LoginPage.module.css';
 
@@ -34,93 +42,157 @@ export default function LoginPage() {
 
   if (newApiKey) {
     return (
-      <div className={styles.loginPage}>
-        <div className={styles.loginForm}>
-          <div className={styles.loginHeader}>
-            <Package size={32} />
-            <h1>Account Created!</h1>
-            <p>Save your OTA API key now. You won't be able to see it again.</p>
+      <div className={styles.page}>
+        <div className={styles.brandPanel}>
+          <div className={styles.brandContent}>
+            <div className={styles.brandLogo}>
+              <Layers size={24} />
+            </div>
+            <h1 className={styles.brandTitle}>OTA Manager</h1>
+            <p className={styles.brandTagline}>
+              Ship React Native updates instantly — no app store review needed.
+            </p>
+            <div className={styles.features}>
+              <div className={styles.feature}>
+                <Zap size={16} />
+                <span>Instant OTA updates</span>
+              </div>
+              <div className={styles.feature}>
+                <Shield size={16} />
+                <span>Secure bundle delivery</span>
+              </div>
+              <div className={styles.feature}>
+                <Globe size={16} />
+                <span>Android & iOS support</span>
+              </div>
+            </div>
           </div>
-          <div className="api-key-reveal">
-            <code className="api-key-value">{newApiKey}</code>
+        </div>
+
+        <div className={styles.formPanel}>
+          <div className={styles.formWrapper}>
+            <div className={styles.formHeader}>
+              <div className={styles.successIcon}>
+                <Check size={24} />
+              </div>
+              <h2>Account Created</h2>
+              <p>
+                Save your OTA API key now. You won't be able to see it again.
+              </p>
+            </div>
+            <div className="api-key-reveal">
+              <code className="api-key-value">{newApiKey}</code>
+              <button
+                className={`btn-icon ${keyCopied ? 'copied' : ''}`}
+                onClick={handleCopyKey}
+              >
+                {keyCopied ? <Check size={16} /> : <Copy size={16} />}
+              </button>
+            </div>
             <button
-              className={`btn-icon ${keyCopied ? 'copied' : ''}`}
-              onClick={handleCopyKey}
+              className="btn-primary full-width"
+              onClick={() => setNewApiKey(null)}
             >
-              {keyCopied ? <Check size={16} /> : <Copy size={16} />}
+              Continue to Dashboard
+              <ArrowRight size={16} />
             </button>
           </div>
-          <button
-            className="btn-primary full-width"
-            onClick={() => setNewApiKey(null)}
-          >
-            Continue to Dashboard
-          </button>
         </div>
       </div>
     );
   }
 
   return (
-    <div className={styles.loginPage}>
-      <form className={styles.loginForm} onSubmit={onSubmit}>
-        <div className={styles.loginHeader}>
-          <Package size={32} />
-          <h1>OTA Bundle Manager</h1>
-          <p>
-            {isSignup
-              ? 'Create a new account'
-              : 'Sign in to manage your bundles'}
+    <div className={styles.page}>
+      <div className={styles.brandPanel}>
+        <div className={styles.brandContent}>
+          <div className={styles.brandLogo}>
+            <Layers size={24} />
+          </div>
+          <h1 className={styles.brandTitle}>OTA Manager</h1>
+          <p className={styles.brandTagline}>
+            Ship React Native updates instantly — no app store review needed.
           </p>
+          <div className={styles.features}>
+            <div className={styles.feature}>
+              <Zap size={16} />
+              <span>Instant OTA updates</span>
+            </div>
+            <div className={styles.feature}>
+              <Shield size={16} />
+              <span>Secure bundle delivery</span>
+            </div>
+            <div className={styles.feature}>
+              <Globe size={16} />
+              <span>Android & iOS support</span>
+            </div>
+          </div>
         </div>
-        {error && <div className="alert error">{error}</div>}
-        <div className="form-group">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            required
-          />
-        </div>
-        <div className="form-group">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="••••••••"
-            required
-            minLength={6}
-          />
-        </div>
-        <button
-          type="submit"
-          className="btn-primary full-width"
-          disabled={loading}
-        >
-          {loading
-            ? isSignup
-              ? 'Creating account...'
-              : 'Signing in...'
-            : isSignup
-              ? 'Sign Up'
-              : 'Sign In'}
-        </button>
-        <p className={styles.authToggle}>
-          {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
+      </div>
+
+      <div className={styles.formPanel}>
+        <form className={styles.formWrapper} onSubmit={onSubmit}>
+          <div className={styles.formHeader}>
+            <h2>{isSignup ? 'Create an account' : 'Welcome back'}</h2>
+            <p>
+              {isSignup
+                ? 'Get started with OTA bundle management'
+                : 'Sign in to manage your bundles'}
+            </p>
+          </div>
+
+          {error && <div className="alert error">{error}</div>}
+
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              required
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              id="password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              minLength={6}
+            />
+          </div>
+
           <button
-            type="button"
-            className={styles.linkBtn}
-            onClick={() => setIsSignup(!isSignup)}
+            type="submit"
+            className="btn-primary full-width"
+            disabled={loading}
           >
-            {isSignup ? 'Sign In' : 'Sign Up'}
+            {loading
+              ? isSignup
+                ? 'Creating account...'
+                : 'Signing in...'
+              : isSignup
+                ? 'Create Account'
+                : 'Sign In'}
           </button>
-        </p>
-      </form>
+
+          <p className={styles.authToggle}>
+            {isSignup ? 'Already have an account?' : "Don't have an account?"}{' '}
+            <button
+              type="button"
+              className={styles.linkBtn}
+              onClick={() => setIsSignup(!isSignup)}
+            >
+              {isSignup ? 'Sign In' : 'Sign Up'}
+            </button>
+          </p>
+        </form>
+      </div>
     </div>
   );
 }
