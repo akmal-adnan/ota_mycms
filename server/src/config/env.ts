@@ -19,11 +19,13 @@ const _env = {
   PORT: parseInt(optionalEnv('PORT', '3001'), 10),
   MONGO_URI: requireEnv('MONGO_URI'),
   JWT_SECRET: requireEnv('JWT_SECRET'),
-  R2_ACCOUNT_ID: requireEnv('R2_ACCOUNT_ID'),
-  R2_ACCESS_KEY_ID: requireEnv('R2_ACCESS_KEY_ID'),
-  R2_SECRET_ACCESS_KEY: requireEnv('R2_SECRET_ACCESS_KEY'),
-  R2_BUCKET_NAME: requireEnv('R2_BUCKET_NAME'),
-  R2_PUBLIC_URL: optionalEnv('R2_PUBLIC_URL', ''),
+  STORAGE_TYPE: optionalEnv('STORAGE_TYPE', 'local'),
+  LOCAL_STORAGE_DIR: optionalEnv('LOCAL_STORAGE_DIR', 'uploads'),
+  // R2_ACCOUNT_ID: requireEnv('R2_ACCOUNT_ID'),
+  // R2_ACCESS_KEY_ID: requireEnv('R2_ACCESS_KEY_ID'),
+  // R2_SECRET_ACCESS_KEY: requireEnv('R2_SECRET_ACCESS_KEY'),
+  // R2_BUCKET_NAME: requireEnv('R2_BUCKET_NAME'),
+  // R2_PUBLIC_URL: optionalEnv('R2_PUBLIC_URL'),
   ALLOWED_ORIGINS: optionalEnv('ALLOWED_ORIGINS', ''),
 };
 

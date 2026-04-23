@@ -2,6 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
+import path from 'path';
 import pinoHttp from 'pino-http';
 import { connectDB } from './config/db';
 import { env } from './config/env';
@@ -26,6 +27,11 @@ app.use(
 app.use(express.json());
 app.use(cookieParser());
 app.use(pinoHttp({ logger }));
+
+// needed for local storage
+if (env.STORAGE_TYPE === 'local') {
+  app.use('/uploads', express.static(path.resolve(env.LOCAL_STORAGE_DIR)));
+}
 
 app.get('/', (_req, res) => {
   res.json({ status: 'ok' });

@@ -1,7 +1,12 @@
 import { createHash } from 'crypto';
 import { Request, Response } from 'express';
 import { BundleGroup } from '../models/BundleGroup';
-import { uploadToR2, deleteFromR2 } from '../services/r2.service';
+// Cloudflare/R2 fallback (kept for quick rollback):
+// import { uploadToR2, deleteFromR2 } from '../services/r2.service';
+import {
+  uploadToLocal,
+  deleteFromLocal,
+} from '../services/localStorage.service';
 import { ConflictError, NotFoundError, ValidationError } from '../utils/errors';
 
 function sha256Hex(buf: Buffer): string {
@@ -81,8 +86,10 @@ export async function deleteGroup(req: Request, res: Response): Promise<void> {
   if (!group) throw new NotFoundError('Bundle group not found');
 
   const prefix = `ota/${group.ownerId.toString()}/${group.version}`;
-  await deleteFromR2(`${prefix}/index.android.bundle.zip`);
-  await deleteFromR2(`${prefix}/main.jsbundle.zip`);
+  // await deleteFromR2(`${prefix}/index.android.bundle.zip`);
+  // await deleteFromR2(`${prefix}/main.jsbundle.zip`);
+  await deleteFromLocal(`${prefix}/index.android.bundle.zip`);
+  await deleteFromLocal(`${prefix}/main.jsbundle.zip`);
 
   await BundleGroup.findByIdAndDelete(req.params.id);
   res.json({ success: true });
@@ -104,7 +111,8 @@ export async function uploadFiles(req: Request, res: Response): Promise<void> {
 
   if (files.androidBundle?.[0]) {
     const { buffer } = files.androidBundle[0];
-    group.androidBundleUrl = await uploadToR2(
+    // group.androidBundleUrl = await uploadToR2(
+    group.androidBundleUrl = await uploadToLocal(
       `${prefix}/index.android.bundle.zip`,
       buffer,
       'application/zip',
@@ -114,7 +122,8 @@ export async function uploadFiles(req: Request, res: Response): Promise<void> {
 
   if (files.iosBundle?.[0]) {
     const { buffer } = files.iosBundle[0];
-    group.iosBundleUrl = await uploadToR2(
+    // group.iosBundleUrl = await uploadToR2(
+    group.iosBundleUrl = await uploadToLocal(
       `${prefix}/main.jsbundle.zip`,
       buffer,
       'application/zip',
