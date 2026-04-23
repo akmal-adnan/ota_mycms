@@ -25,17 +25,17 @@ export function useAuth() {
   const handleSignup = async (
     emailInput: string,
     password: string,
-  ): Promise<string | null> => {
+  ): Promise<boolean> => {
     setLoading(true);
     setError('');
     try {
       const data = await signupApi(emailInput, password);
       login(data.email);
-      return data.otaApiKey;
+      return true;
     } catch (err: unknown) {
       const message = getApiErrorMessage(err, 'Signup failed');
       setError(message);
-      return null;
+      return false;
     } finally {
       setLoading(false);
     }

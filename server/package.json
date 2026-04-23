@@ -9,7 +9,9 @@
     "start": "node dist/index.js",
     "migrate:bundle-indexes": "tsx src/scripts/migrate-bundle-indexes.ts",
     "migrate:bundle-keys": "tsx src/scripts/migrate-bundle-keys.ts",
-    "migrate:bundle-keys:dry-run": "tsx src/scripts/migrate-bundle-keys.ts --dry-run"
+    "migrate:bundle-keys:dry-run": "tsx src/scripts/migrate-bundle-keys.ts --dry-run",
+    "migrate:project-refactor": "tsx src/scripts/migrate-project-refactor.ts",
+    "migrate:project-refactor:dry-run": "tsx src/scripts/migrate-project-refactor.ts --dry-run"
   },
   "keywords": [],
   "author": "akmal",

@@ -17,13 +17,26 @@
 }
 
 .headerInner {
-  max-width: 1280px;
-  margin: 0 auto;
   padding: 0 var(--space-6);
-  height: 56px;
+  height: 48px;
   display: flex;
   align-items: center;
-  gap: var(--space-8);
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+/* ── Body (sidebar + main) ────────────────── */
+
+.body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
 }
 
 /* ── Brand ────────────────────────────────── */
@@ -49,51 +62,13 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #0D1117;
+  color: #0d1117;
 }
 
 .brandName {
   font-size: 1rem;
   font-weight: 700;
   letter-spacing: -0.02em;
-}
-
-/* ── Navigation ───────────────────────────── */
-
-.nav {
-  display: flex;
-  align-items: center;
-  gap: var(--space-1);
-  flex: 1;
-}
-
-.navItem {
-  position: relative;
-  color: var(--text-muted);
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: var(--space-4) var(--space-3);
-  text-decoration: none;
-  transition: color var(--motion-fast) var(--ease-out);
-}
-
-.navItem:hover {
-  color: var(--text);
-}
-
-.navItemActive {
-  color: var(--text);
-}
-
-.navItemActive::after {
-  content: '';
-  position: absolute;
-  bottom: 0;
-  left: var(--space-3);
-  right: var(--space-3);
-  height: 2px;
-  background: var(--accent);
-  border-radius: 1px 1px 0 0;
 }
 
 /* ── User Menu ────────────────────────────── */
@@ -158,8 +133,14 @@
 }
 
 @keyframes dropdownIn {
-  from { opacity: 0; transform: translateY(-4px) scale(0.97); }
-  to   { opacity: 1; transform: translateY(0) scale(1); }
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
 }
 
 .dropdownLabel {
@@ -210,10 +191,10 @@
 
 .main {
   flex: 1;
-  width: 100%;
+  min-width: 0;
   max-width: 1280px;
-  margin: 0 auto;
   padding: var(--space-8) var(--space-6);
+  overflow-y: auto;
 }
 
 /* ── Responsive ───────────────────────────── */
@@ -221,7 +202,7 @@
 @media (max-width: 768px) {
   .headerInner {
     padding: 0 var(--space-4);
-    gap: var(--space-4);
+    gap: var(--space-3);
   }
 
   .brandName {
@@ -239,11 +220,6 @@
 
 @media (max-width: 480px) {
   .headerInner {
-    height: 48px;
-  }
-
-  .navItem {
-    font-size: 0.82rem;
-    padding: var(--space-3) var(--space-2);
+    height: 44px;
   }
 }

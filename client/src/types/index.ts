@@ -1,22 +1,51 @@
-export interface BundleItem {
-  id: string;
-  name: string;
-  version: number;
-  downloadAndroidUrl: string;
-  downloadIosUrl: string;
-  active: boolean;
+// ── Project ──────────────────────────────────
+
+export interface ApiKeyEntry {
+  _id: string;
+  key: string;
+  label: string;
+  createdAt: string;
 }
 
-export interface BundleGroup {
+export interface Project {
   _id: string;
   name: string;
-  version: number;
+  ownerId: string;
+  apiKeys: ApiKeyEntry[];
+  createdAt: string;
+  updatedAt: string;
+}
+
+// ── Bundle ───────────────────────────────────
+
+export type BundleStatus = 'draft' | 'released';
+
+export interface Bundle {
+  _id: string;
+  projectId: string;
+  name: string;
+  title: string;
+  description: string;
+  targetAppVersion: string;
+  bundleVersion: string;
   androidBundleUrl: string | null;
   iosBundleUrl: string | null;
+  androidBundleSha256: string | null;
+  iosBundleSha256: string | null;
+  status: BundleStatus;
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
 }
+
+// ── Release ──────────────────────────────────
+
+export interface ReleaseGroup {
+  targetAppVersion: string;
+  bundles: Bundle[];
+}
+
+// ── Auth ─────────────────────────────────────
 
 export interface LoginResponse {
   email: string;
@@ -24,7 +53,6 @@ export interface LoginResponse {
 
 export interface SignupResponse {
   email: string;
-  otaApiKey: string;
 }
 
 export interface MeResponse {
@@ -32,12 +60,19 @@ export interface MeResponse {
   userId: string;
 }
 
-export interface ApiKeyInfo {
-  keyPreview: string;
-  createdAt: string;
+// ── API Key (per-project, returned on creation) ──
+
+export interface ApiKeyCreateResponse {
+  apiKey: ApiKeyEntry;
 }
 
-export interface ApiKeyRegenerateResponse {
-  otaApiKey: string;
-  createdAt: string;
+// ── Updates API (consumed by OTA clients) ────
+
+export interface BundleItem {
+  id: string;
+  name: string;
+  version: string;
+  downloadAndroidUrl: string;
+  downloadIosUrl: string;
+  active: boolean;
 }

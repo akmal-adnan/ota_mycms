@@ -8,6 +8,17 @@ import { r2Client } from '../config/r2';
 import { env } from '../config/env';
 import { logger } from '../utils/logger';
 
+export function buildBundleArtifactKey(
+  ownerId: string,
+  projectId: string,
+  bundleId: string,
+  platform: 'android' | 'ios',
+): string {
+  const filename =
+    platform === 'android' ? 'index.android.bundle.zip' : 'main.jsbundle.zip';
+  return `ota/${ownerId}/${projectId}/${bundleId}/${filename}`;
+}
+
 export async function uploadToR2(
   key: string,
   body: Buffer,

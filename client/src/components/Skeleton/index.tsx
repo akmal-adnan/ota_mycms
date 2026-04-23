@@ -21,7 +21,7 @@ export function Skeleton({ className }: SkeletonProps) {
   return <div className={withSkeletonClass(className)} aria-hidden="true" />;
 }
 
-export function DashboardTableSkeleton() {
+export function ProjectsPageSkeleton() {
   return (
     <section className={styles.skeletonPage} aria-hidden="true">
       <div className={styles.skeletonTable}>
@@ -35,7 +35,7 @@ export function DashboardTableSkeleton() {
   );
 }
 
-export function GroupDetailSkeleton() {
+export function BundleManagerSkeleton() {
   return (
     <section className={styles.skeletonPage} aria-hidden="true">
       <Skeleton className="skeleton-title" />
@@ -53,11 +53,30 @@ export function GroupDetailSkeleton() {
   );
 }
 
-export function SettingsKeySkeleton() {
+export function BundleListSkeleton() {
   return (
     <section className={styles.skeletonPage} aria-hidden="true">
+      <Skeleton className="skeleton-title" />
+      <div className={styles.skeletonTable}>
+        <Skeleton className="skeleton-row" />
+        <Skeleton className="skeleton-row" />
+        <Skeleton className="skeleton-row" />
+      </div>
+    </section>
+  );
+}
+
+export function ReleasesPageSkeleton() {
+  return (
+    <section className={styles.skeletonPage} aria-hidden="true">
+      <Skeleton className="skeleton-title" />
       <Skeleton className="skeleton-subtitle" />
-      <div className={styles.skeletonCard} />
+      <div className={styles.skeletonGrid2}>
+        <div className={styles.skeletonCard} />
+        <div className={styles.skeletonCard} />
+        <div className={styles.skeletonCard} />
+        <div className={styles.skeletonCard} />
+      </div>
     </section>
   );
 }

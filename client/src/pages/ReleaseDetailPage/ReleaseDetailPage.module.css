@@ -1,0 +1,220 @@
+/* ── Breadcrumb ───────────────────────────── */
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-6);
+  font-size: 0.85rem;
+  color: var(--text-subtle);
+}
+
+.breadcrumbLink {
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color var(--motion-fast) var(--ease-out);
+}
+
+.breadcrumbLink:hover {
+  color: var(--text);
+}
+
+.breadcrumbCurrent {
+  color: var(--text);
+  font-weight: 500;
+}
+
+/* ── Table ────────────────────────────────── */
+
+.tableWrapper {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.table thead {
+  background: var(--bg-elevated);
+}
+
+.table th {
+  text-align: left;
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+  white-space: nowrap;
+  border-bottom: 1px solid var(--border);
+}
+
+.table td {
+  padding: var(--space-3) var(--space-4);
+  font-size: 0.9rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.table tbody tr {
+  transition: background var(--motion-fast) var(--ease-out);
+  cursor: pointer;
+}
+
+.table tbody tr:hover {
+  background: var(--surface-hover);
+}
+
+.table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+/* ── Cells ────────────────────────────────── */
+
+.versionBadge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.8rem;
+  font-weight: 500;
+  background: var(--surface-hover);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+}
+
+.dateCell {
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+/* ── Toggle ───────────────────────────────── */
+
+.toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.toggleTrack {
+  display: inline-flex;
+  align-items: center;
+  width: 34px;
+  height: 18px;
+  background: var(--border);
+  border-radius: var(--radius-full);
+  padding: 2px;
+  transition: background var(--motion-mid) var(--ease-out);
+}
+
+.toggleActive .toggleTrack {
+  background: var(--success);
+}
+
+.toggleThumb {
+  width: 14px;
+  height: 14px;
+  border-radius: var(--radius-full);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  transition: transform var(--motion-mid) var(--ease-out);
+  transform: translateX(0);
+}
+
+.toggleActive .toggleThumb {
+  transform: translateX(16px);
+}
+
+/* ── Expandable Detail ────────────────────── */
+
+.detailRow td {
+  padding: 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.detailRow:last-child td {
+  border-bottom: none;
+}
+
+.detailContent {
+  padding: var(--space-4) var(--space-6);
+  background: var(--bg);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4) var(--space-6);
+}
+
+.detailItem label {
+  display: block;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-subtle);
+  margin-bottom: var(--space-1);
+}
+
+.detailItem span {
+  font-size: 0.88rem;
+  color: var(--text);
+}
+
+.detailItem.fullWidth {
+  grid-column: 1 / -1;
+}
+
+.filesRow {
+  display: flex;
+  gap: var(--space-3);
+}
+
+.fileBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+}
+
+.fileBadgeAndroid {
+  background: rgba(61, 220, 132, 0.12);
+  color: var(--android);
+}
+
+.fileBadgeIos {
+  background: rgba(0, 122, 255, 0.12);
+  color: var(--ios);
+}
+
+.fileBadgePending {
+  background: var(--surface-hover);
+  color: var(--text-subtle);
+}
+
+/* ── Responsive ───────────────────────────── */
+
+@media (max-width: 768px) {
+  .tableWrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .table {
+    min-width: 540px;
+  }
+
+  .detailContent {
+    grid-template-columns: 1fr;
+  }
+}

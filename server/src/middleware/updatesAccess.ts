@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import { User } from '../models/User';
+import { ProjectApiKey } from '../models/ProjectApiKey';
 import { UnauthorizedError } from '../utils/errors';
 
 export async function updatesAccessMiddleware(
@@ -13,13 +13,19 @@ export async function updatesAccessMiddleware(
     throw new UnauthorizedError('Missing x-ota-key header');
   }
 
-  // Indexed O(1) lookup — index defined on User.otaApiKey
-  const user = await User.findOne({ otaApiKey: key }).select('_id').lean();
+  const apiKey = await ProjectApiKey.findOne({ key })
+    .select('_id ownerId projectId')
+    .lean();
 
-  if (!user) {
+  if (!apiKey) {
     throw new UnauthorizedError('Invalid API key');
   }
 
-  req.admin = { email: '', userId: user._id.toString() };
+  req.admin = {
+    email: '',
+    userId: apiKey.ownerId.toString(),
+    projectId: apiKey.projectId.toString(),
+    projectApiKeyId: apiKey._id.toString(),
+  };
   next();
 }

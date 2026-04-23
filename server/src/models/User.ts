@@ -3,8 +3,8 @@ import mongoose, { Schema, Document } from 'mongoose';
 export interface IUser extends Document {
   email: string;
   password: string;
-  otaApiKey: string;
-  otaApiKeyCreatedAt: Date;
+  otaApiKey?: string | null;
+  otaApiKeyCreatedAt?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -19,12 +19,15 @@ const UserSchema = new Schema<IUser>(
       lowercase: true,
     },
     password: { type: String, required: true },
-    otaApiKey: { type: String, required: true },
-    otaApiKeyCreatedAt: { type: Date, default: Date.now },
+    otaApiKey: { type: String, default: null },
+    otaApiKeyCreatedAt: { type: Date, default: null },
   },
   { timestamps: true },
 );
 
-UserSchema.index({ otaApiKey: 1 }, { unique: true });
+UserSchema.index(
+  { otaApiKey: 1 },
+  { unique: true, partialFilterExpression: { otaApiKey: { $type: 'string' } } },
+);
 
 export const User = mongoose.model<IUser>('User', UserSchema);

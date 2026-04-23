@@ -1,11 +1,5 @@
 import apiClient from './client';
-import type {
-  LoginResponse,
-  SignupResponse,
-  MeResponse,
-  ApiKeyInfo,
-  ApiKeyRegenerateResponse,
-} from '../types';
+import type { LoginResponse, SignupResponse, MeResponse } from '../types';
 
 export async function loginApi(
   email: string,
@@ -35,17 +29,5 @@ export async function logoutApi(): Promise<void> {
 
 export async function meApi(): Promise<MeResponse> {
   const { data } = await apiClient.get<MeResponse>('/auth/me');
-  return data;
-}
-
-export async function getApiKeyApi(): Promise<ApiKeyInfo> {
-  const { data } = await apiClient.get<ApiKeyInfo>('/auth/api-key');
-  return data;
-}
-
-export async function regenerateApiKeyApi(): Promise<ApiKeyRegenerateResponse> {
-  const { data } = await apiClient.post<ApiKeyRegenerateResponse>(
-    '/auth/api-key/regenerate',
-  );
   return data;
 }

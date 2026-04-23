@@ -48,8 +48,6 @@
   font-size: 0.9rem;
 }
 
-/* Status Badge */
-
 .statusBadge {
   display: inline-flex;
   align-items: center;
@@ -58,70 +56,18 @@
   border-radius: var(--radius-full);
   font-size: 0.75rem;
   font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
 }
 
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
+.statusDraft {
+  background: var(--warning-muted);
+  color: var(--warning);
 }
 
-.statusActive {
+.statusReleased {
   background: var(--success-muted);
   color: var(--success);
-}
-
-.statusActive .statusDot {
-  background: var(--success);
-  box-shadow: 0 0 6px rgba(22, 199, 132, 0.5);
-}
-
-.statusInactive {
-  background: var(--surface-hover);
-  color: var(--text-subtle);
-}
-
-.statusInactive .statusDot {
-  background: var(--text-subtle);
-}
-
-/* ── Stats Row ────────────────────────────── */
-
-.statsRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
-.stat {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-}
-
-.statIconEl {
-  color: var(--text-subtle);
-  flex-shrink: 0;
-}
-
-.statValue {
-  display: block;
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1.2;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.statLabel {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-top: 2px;
 }
 
 /* ── Sections ─────────────────────────────── */
@@ -142,79 +88,52 @@
   margin-bottom: var(--space-5);
 }
 
-/* ── File Cards ───────────────────────────── */
+/* ── Form ─────────────────────────────────── */
 
-.filesGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-}
-
-.fileCard {
+.formCard {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-3);
+  padding: var(--space-6);
 }
 
-.fileCard svg {
-  color: var(--text-subtle);
+.formGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
 }
 
-.fileCardReady svg {
-  color: var(--success);
+.formFull {
+  grid-column: 1 / -1;
 }
 
-.fileHead {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.platformTag {
-  display: inline-flex;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.platformTag[data-platform='android'] {
-  background: rgba(61, 220, 132, 0.12);
-  color: var(--android);
-}
-
-.platformTag[data-platform='ios'] {
-  background: rgba(0, 122, 255, 0.12);
-  color: var(--ios);
-}
-
-.fileName {
+.formFull textarea {
+  width: 100%;
+  min-height: 80px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 10px 12px;
+  border-radius: var(--radius);
   font-size: 0.9rem;
-  font-weight: 600;
-  font-family: 'JetBrains Mono', monospace;
-  word-break: break-all;
+  outline: none;
+  resize: vertical;
+  transition:
+    border-color var(--motion-fast) var(--ease-out),
+    box-shadow var(--motion-fast) var(--ease-out);
+  font-family: inherit;
 }
 
-.fileReady {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 0.82rem;
-  color: var(--success);
-  font-weight: 500;
+.formFull textarea:hover {
+  border-color: var(--border-strong);
 }
 
-.filePending {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 0.82rem;
+.formFull textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(97, 136, 255, 0.15);
+}
+
+.formFull textarea::placeholder {
   color: var(--text-subtle);
 }
 
@@ -272,10 +191,6 @@
   color: var(--text-subtle);
 }
 
-.uploadZoneSelected .uploadZoneIcon {
-  color: var(--accent);
-}
-
 .uploadZoneIconReady {
   color: var(--accent);
 }
@@ -299,27 +214,6 @@
 
 .hiddenInput {
   display: none;
-}
-
-.uploadZoneBtn {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition:
-    background var(--motion-fast) var(--ease-out),
-    border-color var(--motion-fast) var(--ease-out);
-}
-
-.uploadZoneBtn:hover {
-  background: var(--surface-active);
-  border-color: var(--border-strong);
 }
 
 .uploadZoneActions {
@@ -368,16 +262,13 @@
   background: rgba(234, 57, 67, 0.25);
 }
 
-.uploadActions {
+/* ── Action Bar ───────────────────────────── */
+
+.actionBar {
   display: flex;
   align-items: center;
-  gap: var(--space-4);
+  gap: var(--space-3);
   flex-wrap: wrap;
-}
-
-.uploadHint {
-  color: var(--text-subtle);
-  font-size: 0.82rem;
 }
 
 .uploadSummary {
@@ -389,15 +280,12 @@
 /* ── Responsive ───────────────────────────── */
 
 @media (max-width: 768px) {
-  .statsRow {
-    grid-template-columns: 1fr;
-  }
-
-  .filesGrid,
+  .formGrid,
   .uploadGrid {
     grid-template-columns: 1fr;
   }
 
+  .formCard,
   .uploadForm {
     padding: var(--space-4);
   }

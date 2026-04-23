@@ -1,12 +1,10 @@
 import { Request, Response } from 'express';
-import { randomBytes } from 'crypto';
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { env } from '../config/env';
 import { User } from '../models/User';
 import {
   ConflictError,
-  NotFoundError,
   UnauthorizedError,
   ValidationError,
 } from '../utils/errors';
@@ -40,12 +38,10 @@ export async function signup(req: Request, res: Response): Promise<void> {
     throw new ConflictError('An account with this email already exists');
 
   const hashedPassword = await bcrypt.hash(password as string, 10);
-  const otaApiKey = randomBytes(32).toString('hex');
 
   const user = await User.create({
     email: normalizedEmail,
     password: hashedPassword,
-    otaApiKey,
   });
 
   const token = jwt.sign(
@@ -55,7 +51,7 @@ export async function signup(req: Request, res: Response): Promise<void> {
   );
 
   setAuthCookie(res, token);
-  res.status(201).json({ email: user.email, otaApiKey });
+  res.status(201).json({ email: user.email });
 }
 
 export async function login(req: Request, res: Response): Promise<void> {
@@ -88,31 +84,4 @@ export async function logout(_req: Request, res: Response): Promise<void> {
 
 export async function me(req: Request, res: Response): Promise<void> {
   res.json({ email: req.admin?.email, userId: req.admin?.userId });
-}
-
-export async function getApiKey(req: Request, res: Response): Promise<void> {
-  const user = await User.findById(req.admin?.userId).select(
-    'otaApiKey otaApiKeyCreatedAt',
-  );
-  if (!user) throw new NotFoundError('User not found');
-
-  res.json({
-    keyPreview: user.otaApiKey,
-    createdAt: user.otaApiKeyCreatedAt,
-  });
-}
-
-export async function regenerateApiKey(
-  req: Request,
-  res: Response,
-): Promise<void> {
-  const newKey = randomBytes(32).toString('hex');
-  const user = await User.findByIdAndUpdate(
-    req.admin?.userId,
-    { otaApiKey: newKey, otaApiKeyCreatedAt: new Date() },
-    { new: true },
-  );
-  if (!user) throw new NotFoundError('User not found');
-
-  res.json({ otaApiKey: newKey, createdAt: user.otaApiKeyCreatedAt });
 }

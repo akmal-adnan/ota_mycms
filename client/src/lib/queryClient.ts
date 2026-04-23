@@ -1,9 +1,13 @@
 import { QueryClient } from '@tanstack/react-query';
 
 export const queryKeys = {
-  apiKey: ['api-key'] as const,
-  bundleGroups: ['bundleGroups'] as const,
-  bundleGroup: (id: string) => ['bundleGroup', id] as const,
+  projects: ['projects'] as const,
+  project: (id: string) => ['projects', id] as const,
+  apiKeys: (projectId: string) => ['projects', projectId, 'api-keys'] as const,
+  bundles: (projectId: string) => ['projects', projectId, 'bundles'] as const,
+  bundle: (projectId: string, bundleId: string) =>
+    ['projects', projectId, 'bundles', bundleId] as const,
+  releases: (projectId: string) => ['projects', projectId, 'releases'] as const,
 };
 
 const QUERY_STALE_TIME_MS = 30_000;
