@@ -1,0 +1,129 @@
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  color: var(--text-subtle);
+  font-size: 0.82rem;
+}
+
+.breadcrumbLink {
+  color: var(--text-muted);
+}
+
+.breadcrumbLink:hover {
+  color: var(--text);
+}
+
+.breadcrumbCurrent {
+  color: var(--text);
+}
+
+.subtitle {
+  margin-top: var(--space-1);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-lg);
+  background: var(--surface-hover);
+  color: var(--text-subtle);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto var(--space-5);
+}
+
+.emptyState h3 {
+  margin-bottom: var(--space-2);
+}
+
+.emptyState p {
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.releaseGroups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.releaseGroup {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.groupHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-3);
+}
+
+.groupHeader h3 {
+  font-size: 1rem;
+}
+
+.groupHeader span {
+  font-size: 0.78rem;
+  color: var(--text-subtle);
+}
+
+.bundleList {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: var(--space-3);
+}
+
+.bundleCard {
+  border: 1px solid var(--border);
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: var(--space-3);
+}
+
+.bundleCardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  margin-bottom: var(--space-2);
+}
+
+.bundleCardHead strong {
+  font-size: 0.88rem;
+}
+
+.versionBadge {
+  border: 1px solid var(--border);
+  border-radius: var(--radius-full);
+  padding: 2px 8px;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.bundleMeta {
+  color: var(--text-muted);
+  font-size: 0.8rem;
+}
+
+.bundleDate {
+  margin-top: var(--space-2);
+  color: var(--text-subtle);
+  font-size: 0.75rem;
+}

@@ -4,6 +4,11 @@ export const queryKeys = {
   apiKey: ['api-key'] as const,
   bundleGroups: ['bundleGroups'] as const,
   bundleGroup: (id: string) => ['bundleGroup', id] as const,
+  // Project domain
+  projects: ['projects'] as const,
+  projectBundles: (projectId: string) => ['projectBundles', projectId] as const,
+  projectReleases: (projectId: string) =>
+    ['projectReleases', projectId] as const,
 };
 
 const QUERY_STALE_TIME_MS = 30_000;

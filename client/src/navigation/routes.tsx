@@ -4,6 +4,7 @@ import ProtectedRoute from '../components/ProtectedRoute';
 import LoginPage from '../pages/LoginPage';
 import DashboardPage from '../pages/DashboardPage';
 import GroupDetailPage from '../pages/GroupDetailPage';
+import ReleasesPage from '../pages/ReleasesPage';
 import SettingsPage from '../pages/SettingsPage';
 
 export const routes: RouteObject[] = [
@@ -18,7 +19,11 @@ export const routes: RouteObject[] = [
         element: <Layout />,
         children: [
           { path: '/', element: <DashboardPage /> },
-          { path: '/groups/:version', element: <GroupDetailPage /> },
+          {
+            path: '/projects/:projectId/bundles',
+            element: <GroupDetailPage />,
+          },
+          { path: '/projects/:projectId/releases', element: <ReleasesPage /> },
           { path: '/settings', element: <SettingsPage /> },
         ],
       },

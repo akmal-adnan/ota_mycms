@@ -1,18 +1,14 @@
-/* ── Breadcrumb ───────────────────────────── */
-
 .breadcrumb {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  margin-bottom: var(--space-6);
-  font-size: 0.85rem;
+  margin-bottom: var(--space-5);
   color: var(--text-subtle);
+  font-size: 0.82rem;
 }
 
 .breadcrumbLink {
   color: var(--text-muted);
-  text-decoration: none;
-  transition: color var(--motion-fast) var(--ease-out);
 }
 
 .breadcrumbLink:hover {
@@ -21,388 +17,297 @@
 
 .breadcrumbCurrent {
   color: var(--text);
-  font-weight: 500;
 }
 
-/* ── Hero ─────────────────────────────────── */
-
-.hero {
-  margin-bottom: var(--space-6);
-}
-
-.heroTop {
-  display: flex;
-  align-items: center;
-  gap: var(--space-3);
-  margin-bottom: var(--space-2);
-  flex-wrap: wrap;
-}
-
-.heroTitle {
-  font-size: 1.5rem;
-  font-weight: 700;
-}
-
-.heroSub {
+.subtitle {
+  margin-top: var(--space-1);
   color: var(--text-muted);
   font-size: 0.9rem;
 }
 
-/* Status Badge */
+.createForm {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-5);
+  margin-bottom: var(--space-5);
+}
 
-.statusBadge {
+.createGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.emptyState {
+  text-align: center;
+  padding: var(--space-12) var(--space-6);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+}
+
+.emptyIcon {
+  width: 56px;
+  height: 56px;
+  margin: 0 auto var(--space-4);
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-subtle);
+  background: var(--surface-hover);
+}
+
+.emptyState h3 {
+  margin-bottom: var(--space-2);
+}
+
+.emptyState p {
+  color: var(--text-muted);
+  margin-bottom: var(--space-6);
+}
+
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 320px 1fr;
+  gap: var(--space-5);
+  align-items: start;
+}
+
+.bundleListPanel {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-4);
+}
+
+.bundleListPanel h3 {
+  font-size: 0.95rem;
+  margin-bottom: var(--space-3);
+}
+
+.bundleList {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.bundleRow {
+  width: 100%;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: var(--space-3);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  cursor: pointer;
+  text-align: left;
+}
+
+.bundleRow:hover {
+  border-color: var(--border-strong);
+}
+
+.bundleRow strong {
+  display: block;
+  font-size: 0.86rem;
+  color: var(--text);
+}
+
+.bundleRow span {
+  display: block;
+  font-size: 0.76rem;
+  color: var(--text-subtle);
+}
+
+.bundleRowActive {
+  border-color: var(--primary);
+  background: rgba(97, 136, 255, 0.08);
+}
+
+.releasedBadge,
+.draftBadge {
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  padding: 3px 10px;
+  padding: 2px 8px;
   border-radius: var(--radius-full);
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   font-weight: 600;
 }
 
-.statusDot {
-  width: 6px;
-  height: 6px;
-  border-radius: var(--radius-full);
-}
-
-.statusActive {
+.releasedBadge {
   background: var(--success-muted);
   color: var(--success);
 }
 
-.statusActive .statusDot {
-  background: var(--success);
-  box-shadow: 0 0 6px rgba(22, 199, 132, 0.5);
-}
-
-.statusInactive {
+.draftBadge {
   background: var(--surface-hover);
   color: var(--text-subtle);
 }
 
-.statusInactive .statusDot {
-  background: var(--text-subtle);
-}
-
-/* ── Stats Row ────────────────────────────── */
-
-.statsRow {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-8);
-}
-
-.stat {
+.detailPanel {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
   padding: var(--space-5);
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
 }
 
-.statIconEl {
-  color: var(--text-subtle);
-  flex-shrink: 0;
-}
-
-.statValue {
-  display: block;
-  font-size: 1.1rem;
-  font-weight: 700;
-  line-height: 1.2;
-  font-family: 'JetBrains Mono', monospace;
-}
-
-.statLabel {
-  display: block;
-  font-size: 0.78rem;
-  color: var(--text-muted);
-  margin-top: 2px;
-}
-
-/* ── Sections ─────────────────────────────── */
-
-.section {
-  margin-bottom: var(--space-8);
-}
-
-.sectionTitle {
-  font-size: 1.05rem;
-  font-weight: 600;
-  margin-bottom: var(--space-2);
-}
-
-.sectionDesc {
-  color: var(--text-muted);
-  font-size: 0.9rem;
+.detailHeader {
   margin-bottom: var(--space-5);
 }
 
-/* ── File Cards ───────────────────────────── */
+.detailHeader h3 {
+  font-size: 1.1rem;
+}
 
-.filesGrid {
+.detailHeader p {
+  color: var(--text-muted);
+  font-size: 0.88rem;
+  margin-top: var(--space-1);
+}
+
+.editGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-4);
 }
 
-.fileCard {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-5);
-  display: flex;
-  flex-direction: column;
+.currentFiles {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: var(--space-3);
+  margin: var(--space-4) 0;
 }
 
-.fileCard svg {
-  color: var(--text-subtle);
-}
-
-.fileCardReady svg {
-  color: var(--success);
-}
-
-.fileHead {
+.fileStatusItem {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: var(--space-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-size: 0.82rem;
 }
 
-.platformTag {
-  display: inline-flex;
-  padding: 2px 8px;
-  border-radius: var(--radius-full);
-  font-size: 0.72rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-}
-
-.platformTag[data-platform='android'] {
-  background: rgba(61, 220, 132, 0.12);
-  color: var(--android);
-}
-
-.platformTag[data-platform='ios'] {
-  background: rgba(0, 122, 255, 0.12);
-  color: var(--ios);
-}
-
-.fileName {
-  font-size: 0.9rem;
-  font-weight: 600;
-  font-family: 'JetBrains Mono', monospace;
-  word-break: break-all;
-}
-
-.fileReady {
+.readyStatus {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  font-size: 0.82rem;
+  gap: 6px;
   color: var(--success);
-  font-weight: 500;
+  font-weight: 600;
 }
 
-.filePending {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 0.82rem;
+.pendingStatus {
   color: var(--text-subtle);
+  font-weight: 600;
 }
-
-/* ── Upload Form ──────────────────────────── */
 
 .uploadForm {
-  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: var(--space-6);
+  border-radius: var(--radius);
+  background: var(--bg);
+  padding: var(--space-4);
+  margin-bottom: var(--space-4);
 }
 
 .uploadGrid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-4);
-  margin-bottom: var(--space-5);
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
 }
 
 .uploadZone {
   border: 1px dashed var(--border-strong);
-  border-radius: var(--radius-lg);
-  background: var(--bg);
-  padding: var(--space-5);
+  border-radius: var(--radius);
+  padding: var(--space-4);
+  background: var(--surface);
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: var(--space-3);
+  justify-content: center;
   text-align: center;
+  gap: var(--space-2);
   cursor: pointer;
-  transition:
-    border-color var(--motion-mid) var(--ease-out),
-    background var(--motion-mid) var(--ease-out);
 }
 
-.uploadZone:hover:not(.uploadZoneSelected) {
-  border-color: var(--text-subtle);
-  background: var(--surface-hover);
+.uploadZone strong {
+  font-size: 0.82rem;
 }
 
-.uploadZoneDragOver {
-  border-color: var(--accent);
-  border-style: solid;
-  background: rgba(141, 198, 71, 0.08);
-}
-
-.uploadZoneSelected {
-  border-color: var(--accent);
-  border-style: solid;
-  background: rgba(141, 198, 71, 0.05);
-  cursor: default;
-}
-
-.uploadZoneIcon {
+.uploadZone span {
+  font-size: 0.74rem;
   color: var(--text-subtle);
-}
-
-.uploadZoneSelected .uploadZoneIcon {
-  color: var(--accent);
-}
-
-.uploadZoneIconReady {
-  color: var(--accent);
-}
-
-.uploadZoneTitle {
-  font-size: 0.9rem;
-  font-weight: 600;
-  word-break: break-all;
-}
-
-.uploadZoneMeta {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  word-break: break-all;
   font-family: 'JetBrains Mono', monospace;
 }
 
-.uploadZoneSelected .uploadZoneMeta {
-  color: var(--accent);
+.uploadZoneDragOver,
+.uploadZoneSelected {
+  border-style: solid;
+  border-color: var(--accent);
+}
+
+.uploadZoneDragOver {
+  background: rgba(141, 198, 71, 0.1);
+}
+
+.uploadZoneSelected {
+  background: rgba(141, 198, 71, 0.06);
 }
 
 .hiddenInput {
   display: none;
 }
 
-.uploadZoneBtn {
-  display: inline-flex;
-  align-items: center;
-  padding: 6px 14px;
-  font-size: 0.82rem;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition:
-    background var(--motion-fast) var(--ease-out),
-    border-color var(--motion-fast) var(--ease-out);
-}
-
-.uploadZoneBtn:hover {
-  background: var(--surface-active);
-  border-color: var(--border-strong);
-}
-
-.uploadZoneActions {
+.uploadActions {
   display: flex;
-  align-items: center;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.actionRow {
+  display: flex;
   gap: var(--space-2);
 }
 
-.uploadZoneBtnSmall {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  font-weight: 500;
-  color: var(--text);
-  background: var(--surface-hover);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  cursor: pointer;
-  transition:
-    background var(--motion-fast) var(--ease-out),
-    border-color var(--motion-fast) var(--ease-out);
-}
-
-.uploadZoneBtnSmall:hover {
-  background: var(--surface-active);
-  border-color: var(--border-strong);
-}
-
-.uploadZoneClear {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-1);
-  padding: 4px 10px;
-  font-size: 0.78rem;
-  color: var(--danger);
+.deleteBtn {
+  border: 1px solid rgba(234, 57, 67, 0.35);
   background: var(--danger-muted);
-  border: none;
+  color: var(--danger);
   border-radius: var(--radius);
-  cursor: pointer;
-  transition: background var(--motion-fast) var(--ease-out);
-}
-
-.uploadZoneClear:hover {
-  background: rgba(234, 57, 67, 0.25);
-}
-
-.uploadActions {
-  display: flex;
+  padding: 0 var(--space-3);
+  font-weight: 600;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-4);
-  flex-wrap: wrap;
+  gap: 6px;
+  cursor: pointer;
 }
 
-.uploadHint {
-  color: var(--text-subtle);
-  font-size: 0.82rem;
+.deleteBtn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.uploadSummary {
-  color: var(--accent);
-  font-size: 0.82rem;
-  font-weight: 500;
-}
-
-/* ── Responsive ───────────────────────────── */
-
-@media (max-width: 768px) {
-  .statsRow {
+@media (max-width: 1000px) {
+  .layoutGrid {
     grid-template-columns: 1fr;
   }
+}
 
-  .filesGrid,
+@media (max-width: 720px) {
+  .createGrid,
+  .editGrid,
+  .currentFiles,
   .uploadGrid {
     grid-template-columns: 1fr;
   }
 
-  .uploadForm {
-    padding: var(--space-4);
-  }
-
-  .heroTitle {
-    font-size: 1.25rem;
+  .actionRow,
+  .uploadActions {
+    flex-wrap: wrap;
   }
 }

@@ -8,6 +8,7 @@ import { env } from './config/env';
 import { logger } from './utils/logger';
 import authRoutes from './routes/auth.routes';
 import bundleGroupRoutes from './routes/bundleGroup.routes';
+import projectRoutes from './routes/project.routes';
 import updatesRoutes from './routes/updates.routes';
 import { errorHandler } from './middleware/errorHandler';
 import { dbTest } from './controllers/dbtest.controller';
@@ -35,6 +36,7 @@ app.get('/health/db', dbTest);
 
 app.use('/api/auth', authRoutes);
 app.use('/api/bundle-groups', bundleGroupRoutes);
+app.use('/api/projects', projectRoutes);
 app.use('/api/updates', updatesRoutes);
 
 app.use(errorHandler);

@@ -18,6 +18,33 @@ export interface BundleGroup {
   updatedAt: string;
 }
 
+// ── Project domain ──────────────────────────────────────
+
+export interface Project {
+  _id: string;
+  name: string;
+  projectApiKey: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface Bundle {
+  _id: string;
+  name: string;
+  version: number;
+  projectId: string;
+  targetVersion: string | null;
+  androidBundleUrl: string | null;
+  iosBundleUrl: string | null;
+  androidBundleSha256: string | null;
+  iosBundleSha256: string | null;
+  isActive: boolean;
+  isReleased: boolean;
+  releasedAt: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface LoginResponse {
   email: string;
 }

@@ -1,30 +1,36 @@
 import {
-  useState,
-  useRef,
   useCallback,
+  useRef,
+  useState,
   type ChangeEvent,
-  type FormEvent,
   type DragEvent,
+  type FormEvent,
 } from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import {
-  Upload,
-  FileArchive,
-  ChevronRight,
-  Calendar,
-  Hash,
   CheckCircle2,
-  Clock,
+  ChevronRight,
+  FileArchive,
+  FolderOpen,
+  Plus,
+  Rocket,
+  Save,
+  Trash2,
+  Upload,
   X,
-  Replace,
 } from 'lucide-react';
 import {
-  useBundleGroups,
-  useUploadBundleFiles,
-} from '../../hooks/useBundleGroups';
+  useCreateProjectBundle,
+  useDeleteProjectBundle,
+  useProjectBundles,
+  useProjects,
+  useReleaseProjectBundle,
+  useUpdateProjectBundle,
+  useUploadProjectBundleFiles,
+} from '../../hooks/useProjects';
 import { GroupDetailSkeleton } from '../../components/Skeleton';
-import { useToastStore } from '../../stores/toastStore';
 import { getApiErrorMessage } from '../../utils/apiError';
+import { useToastStore } from '../../stores/toastStore';
 import styles from './GroupDetailPage.module.css';
 
 function formatFileSize(bytes: number): string {
@@ -34,34 +40,52 @@ function formatFileSize(bytes: number): string {
 }
 
 export default function GroupDetailPage() {
-  const { version } = useParams<{ version: string }>();
-  const { data: groups, isLoading } = useBundleGroups();
-  const uploadMutation = useUploadBundleFiles();
+  const { projectId = '' } = useParams<{ projectId: string }>();
 
-  const parsedVersion = Number(version);
-  const group =
-    Number.isFinite(parsedVersion) && groups
-      ? groups.find((g) => g.version === parsedVersion)
-      : undefined;
+  const { data: projects } = useProjects();
+  const { data: bundles, isLoading } = useProjectBundles(projectId);
+
+  const createBundleMutation = useCreateProjectBundle(projectId);
+  const updateBundleMutation = useUpdateProjectBundle(projectId);
+  const deleteBundleMutation = useDeleteProjectBundle(projectId);
+  const uploadMutation = useUploadProjectBundleFiles(projectId);
+  const releaseMutation = useReleaseProjectBundle(projectId);
+
+  const addLoadingToast = useToastStore((state) => state.addLoadingToast);
+  const updateToast = useToastStore((state) => state.updateToast);
+
+  const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
+
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [newBundleName, setNewBundleName] = useState('');
+  const [newTargetVersion, setNewTargetVersion] = useState('');
+  const [bundleDrafts, setBundleDrafts] = useState<
+    Record<string, { name: string; targetVersion: string }>
+  >({});
 
   const [androidFile, setAndroidFile] = useState<File | null>(null);
   const [iosFile, setIosFile] = useState<File | null>(null);
   const [androidDragOver, setAndroidDragOver] = useState(false);
   const [iosDragOver, setIosDragOver] = useState(false);
+
   const androidInputRef = useRef<HTMLInputElement>(null);
   const iosInputRef = useRef<HTMLInputElement>(null);
-  const addLoadingToast = useToastStore((state) => state.addLoadingToast);
-  const updateToast = useToastStore((state) => state.updateToast);
 
-  const handleFileChange =
-    (setter: (f: File | null) => void) =>
-    (e: ChangeEvent<HTMLInputElement>) => {
-      setter(e.target.files?.[0] ?? null);
-    };
+  const project = projects?.find((p) => p._id === projectId);
+  const effectiveSelectedBundleId =
+    selectedBundleId ?? bundles?.[0]?._id ?? null;
+  const selectedBundle =
+    bundles?.find((bundle) => bundle._id === effectiveSelectedBundleId) ?? null;
+  const selectedDraft = selectedBundle
+    ? (bundleDrafts[selectedBundle._id] ?? {
+        name: selectedBundle.name,
+        targetVersion: selectedBundle.targetVersion ?? '',
+      })
+    : null;
 
   const clearFile = useCallback(
     (
-      setter: (f: File | null) => void,
+      setter: (file: File | null) => void,
       ref: React.RefObject<HTMLInputElement | null>,
     ) => {
       setter(null);
@@ -70,56 +94,164 @@ export default function GroupDetailPage() {
     [],
   );
 
-  const handleDrop = useCallback(
-    (setter: (f: File | null) => void, setDrag: (v: boolean) => void) =>
-      (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault();
-        setDrag(false);
-        const file = e.dataTransfer.files[0];
-        if (file && file.name.endsWith('.zip')) {
-          setter(file);
-        }
-      },
-    [],
-  );
+  const handleFileChange =
+    (setter: (file: File | null) => void) =>
+    (event: ChangeEvent<HTMLInputElement>) => {
+      setter(event.target.files?.[0] ?? null);
+    };
 
-  const handleDragOver = useCallback(
-    (setDrag: (v: boolean) => void) => (e: DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
+  const handleDragOver =
+    (setDrag: (value: boolean) => void) =>
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
       setDrag(true);
-    },
-    [],
-  );
+    };
 
-  const handleDragLeave = useCallback(
-    (setDrag: (v: boolean) => void) => (e: DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
+  const handleDragLeave =
+    (setDrag: (value: boolean) => void) =>
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
       setDrag(false);
-    },
-    [],
-  );
+    };
 
-  const handleUpload = (e: FormEvent) => {
-    e.preventDefault();
-    if (!group || (!androidFile && !iosFile)) return;
+  const handleDrop =
+    (setter: (file: File | null) => void, setDrag: (value: boolean) => void) =>
+    (event: DragEvent<HTMLDivElement>) => {
+      event.preventDefault();
+      setDrag(false);
+      const file = event.dataTransfer.files?.[0];
+      if (file && file.name.endsWith('.zip')) {
+        setter(file);
+      }
+    };
 
-    const formData = new FormData();
-    if (androidFile) formData.append('androidBundle', androidFile);
-    if (iosFile) formData.append('iosBundle', iosFile);
-    const loadingToastId = addLoadingToast('Uploading bundle files...');
+  const handleCreateBundle = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!newBundleName.trim()) return;
 
-    uploadMutation.mutate(
-      { id: group._id, formData },
+    const loadingToastId = addLoadingToast('Creating bundle...');
+    createBundleMutation.mutate(
       {
-        onSuccess: () => {
-          clearFile(setAndroidFile, androidInputRef);
-          clearFile(setIosFile, iosInputRef);
-          updateToast(loadingToastId, 'Bundle files uploaded.', 'success');
+        name: newBundleName.trim(),
+        targetVersion: newTargetVersion.trim() || undefined,
+      },
+      {
+        onSuccess: (createdBundle) => {
+          setNewBundleName('');
+          setNewTargetVersion('');
+          setShowCreateForm(false);
+          setSelectedBundleId(createdBundle._id);
+          updateToast(loadingToastId, 'Bundle created.', 'success');
         },
         onError: (error) => {
           updateToast(
             loadingToastId,
-            getApiErrorMessage(error, 'Upload failed. Please try again.'),
+            getApiErrorMessage(error, 'Failed to create bundle'),
+            'error',
+          );
+        },
+      },
+    );
+  };
+
+  const handleSaveBundle = () => {
+    if (!selectedBundle || !selectedDraft) return;
+
+    const loadingToastId = addLoadingToast('Saving bundle changes...');
+    updateBundleMutation.mutate(
+      {
+        bundleId: selectedBundle._id,
+        updates: {
+          name: selectedDraft.name.trim(),
+          targetVersion: selectedDraft.targetVersion.trim() || undefined,
+        },
+      },
+      {
+        onSuccess: () => {
+          setBundleDrafts((prev) => {
+            const next = { ...prev };
+            delete next[selectedBundle._id];
+            return next;
+          });
+          updateToast(loadingToastId, 'Bundle saved.', 'success');
+        },
+        onError: (error) => {
+          updateToast(
+            loadingToastId,
+            getApiErrorMessage(error, 'Failed to save bundle'),
+            'error',
+          );
+        },
+      },
+    );
+  };
+
+  const handleDeleteBundle = () => {
+    if (!selectedBundle) return;
+    if (!window.confirm(`Delete bundle "${selectedBundle.name}"?`)) return;
+
+    const loadingToastId = addLoadingToast(
+      `Deleting ${selectedBundle.name}...`,
+    );
+    deleteBundleMutation.mutate(selectedBundle._id, {
+      onSuccess: () => {
+        setSelectedBundleId(null);
+        updateToast(loadingToastId, 'Bundle deleted.', 'success');
+      },
+      onError: (error) => {
+        updateToast(
+          loadingToastId,
+          getApiErrorMessage(error, 'Failed to delete bundle'),
+          'error',
+        );
+      },
+    });
+  };
+
+  const handleReleaseBundle = () => {
+    if (!selectedBundle) return;
+    if (!selectedBundle.androidBundleUrl || !selectedBundle.iosBundleUrl)
+      return;
+
+    const loadingToastId = addLoadingToast('Releasing bundle...');
+    releaseMutation.mutate(selectedBundle._id, {
+      onSuccess: () => {
+        updateToast(loadingToastId, 'Bundle released.', 'success');
+      },
+      onError: (error) => {
+        updateToast(
+          loadingToastId,
+          getApiErrorMessage(error, 'Failed to release bundle'),
+          'error',
+        );
+      },
+    });
+  };
+
+  const handleUpload = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if (!selectedBundle || (!androidFile && !iosFile)) return;
+
+    const formData = new FormData();
+    if (androidFile) formData.append('androidBundle', androidFile);
+    if (iosFile) formData.append('iosBundle', iosFile);
+
+    const loadingToastId = addLoadingToast('Uploading files...');
+    uploadMutation.mutate(
+      {
+        bundleId: selectedBundle._id,
+        formData,
+      },
+      {
+        onSuccess: () => {
+          clearFile(setAndroidFile, androidInputRef);
+          clearFile(setIosFile, iosInputRef);
+          updateToast(loadingToastId, 'Files uploaded.', 'success');
+        },
+        onError: (error) => {
+          updateToast(
+            loadingToastId,
+            getApiErrorMessage(error, 'Failed to upload files'),
             'error',
           );
         },
@@ -128,266 +260,318 @@ export default function GroupDetailPage() {
   };
 
   if (isLoading) return <GroupDetailSkeleton />;
-  if (!group) return <p className="empty">Group not found</p>;
-
-  const filesReady = [group.androidBundleUrl, group.iosBundleUrl].filter(
-    Boolean,
-  ).length;
 
   return (
     <div className="page">
-      {/* Breadcrumb */}
       <nav className={styles.breadcrumb}>
         <Link to="/" className={styles.breadcrumbLink}>
-          Groups
+          Projects
         </Link>
         <ChevronRight size={14} />
-        <span className={styles.breadcrumbCurrent}>{group.name}</span>
+        <span className={styles.breadcrumbCurrent}>
+          {project?.name ?? 'Project'}
+        </span>
+        <ChevronRight size={14} />
+        <span className={styles.breadcrumbCurrent}>Bundle Manager</span>
       </nav>
 
-      {/* Hero */}
-      <div className={styles.hero}>
-        <div className={styles.heroTop}>
-          <h2 className={styles.heroTitle}>{group.name}</h2>
-          <span
-            className={`${styles.statusBadge} ${group.isActive ? styles.statusActive : styles.statusInactive}`}
-          >
-            <span className={styles.statusDot} />
-            {group.isActive ? 'Active' : 'Inactive'}
-          </span>
+      <div className="page-header">
+        <div>
+          <h2>Bundle Manager</h2>
+          <p className={styles.subtitle}>
+            Create and manage bundles for {project?.name ?? 'this project'}.
+          </p>
         </div>
-        <p className={styles.heroSub}>
-          Manage uploaded OTA bundle archives for this version.
-        </p>
+        <button
+          className="btn-secondary"
+          type="button"
+          onClick={() => setShowCreateForm((prev) => !prev)}
+        >
+          {showCreateForm ? <X size={15} /> : <Plus size={15} />}
+          {showCreateForm ? 'Close Form' : 'Create Bundle'}
+        </button>
       </div>
 
-      {/* Stat Cards */}
-      <div className={styles.statsRow}>
-        <div className={styles.stat}>
-          <Hash size={16} className={styles.statIconEl} />
-          <div>
-            <span className={styles.statValue}>{group.version}</span>
-            <span className={styles.statLabel}>Bundle Version</span>
-          </div>
-        </div>
-        <div className={styles.stat}>
-          <Calendar size={16} className={styles.statIconEl} />
-          <div>
-            <span className={styles.statValue}>
-              {new Date(group.createdAt).toLocaleDateString()}
-            </span>
-            <span className={styles.statLabel}>Created</span>
-          </div>
-        </div>
-        <div className={styles.stat}>
-          <CheckCircle2 size={16} className={styles.statIconEl} />
-          <div>
-            <span className={styles.statValue}>{filesReady}/2</span>
-            <span className={styles.statLabel}>Files Uploaded</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Current Files */}
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>Current Files</h3>
-        <div className={styles.filesGrid}>
-          <div
-            className={`${styles.fileCard} ${group.androidBundleUrl ? styles.fileCardReady : ''}`}
-          >
-            <div className={styles.fileHead}>
-              <span className={styles.platformTag} data-platform="android">
-                Android
-              </span>
-              <FileArchive size={18} />
-            </div>
-            <span className={styles.fileName}>index.android.bundle.zip</span>
-            {group.androidBundleUrl ? (
-              <span className={styles.fileReady}>
-                <CheckCircle2 size={14} /> Uploaded
-              </span>
-            ) : (
-              <span className={styles.filePending}>
-                <Clock size={14} /> Waiting for upload
-              </span>
-            )}
-          </div>
-          <div
-            className={`${styles.fileCard} ${group.iosBundleUrl ? styles.fileCardReady : ''}`}
-          >
-            <div className={styles.fileHead}>
-              <span className={styles.platformTag} data-platform="ios">
-                iOS
-              </span>
-              <FileArchive size={18} />
-            </div>
-            <span className={styles.fileName}>main.jsbundle.zip</span>
-            {group.iosBundleUrl ? (
-              <span className={styles.fileReady}>
-                <CheckCircle2 size={14} /> Uploaded
-              </span>
-            ) : (
-              <span className={styles.filePending}>
-                <Clock size={14} /> Waiting for upload
-              </span>
-            )}
-          </div>
-        </div>
-      </section>
-
-      {/* Upload */}
-      <section className={styles.section}>
-        <h3 className={styles.sectionTitle}>
-          {filesReady === 2 ? 'Replace Files' : 'Upload Files'}
-        </h3>
-        <p className={styles.sectionDesc}>
-          {filesReady === 2
-            ? 'Both bundles are uploaded. You can replace them by uploading new files.'
-            : 'Select one or both ZIP archives, then upload them in a single request.'}
-        </p>
-        <form className={styles.uploadForm} onSubmit={handleUpload}>
-          <div className={styles.uploadGrid}>
-            {/* Android upload zone */}
-            <div
-              className={`${styles.uploadZone} ${androidFile ? styles.uploadZoneSelected : ''} ${androidDragOver ? styles.uploadZoneDragOver : ''}`}
-              onClick={() => !androidFile && androidInputRef.current?.click()}
-              onDrop={handleDrop(setAndroidFile, setAndroidDragOver)}
-              onDragOver={handleDragOver(setAndroidDragOver)}
-              onDragLeave={handleDragLeave(setAndroidDragOver)}
-            >
-              {androidFile ? (
-                <>
-                  <CheckCircle2
-                    size={24}
-                    className={styles.uploadZoneIconReady}
-                  />
-                  <span className={styles.uploadZoneTitle}>
-                    {androidFile.name}
-                  </span>
-                  <span className={styles.uploadZoneMeta}>
-                    {formatFileSize(androidFile.size)}
-                  </span>
-                  <div className={styles.uploadZoneActions}>
-                    <label
-                      className={styles.uploadZoneBtnSmall}
-                      htmlFor="android-file"
-                    >
-                      <Replace size={12} /> Replace
-                    </label>
-                    <button
-                      type="button"
-                      className={styles.uploadZoneClear}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        clearFile(setAndroidFile, androidInputRef);
-                      }}
-                    >
-                      <X size={12} /> Remove
-                    </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <FileArchive size={24} className={styles.uploadZoneIcon} />
-                  <span className={styles.uploadZoneTitle}>Android Bundle</span>
-                  <span className={styles.uploadZoneMeta}>
-                    Drop .zip here or click to browse
-                  </span>
-                </>
-              )}
+      {showCreateForm && (
+        <form className={styles.createForm} onSubmit={handleCreateBundle}>
+          <div className={styles.createGrid}>
+            <div className="form-group">
+              <label htmlFor="bundleName">Bundle name</label>
               <input
-                ref={androidInputRef}
-                className={styles.hiddenInput}
-                id="android-file"
-                type="file"
-                accept=".zip"
-                onChange={handleFileChange(setAndroidFile)}
-                onClick={(e) => e.stopPropagation()}
+                id="bundleName"
+                type="text"
+                value={newBundleName}
+                onChange={(event) => setNewBundleName(event.target.value)}
+                placeholder="e.g. Production Bundle"
+                required
               />
             </div>
-
-            {/* iOS upload zone */}
-            <div
-              className={`${styles.uploadZone} ${iosFile ? styles.uploadZoneSelected : ''} ${iosDragOver ? styles.uploadZoneDragOver : ''}`}
-              onClick={() => !iosFile && iosInputRef.current?.click()}
-              onDrop={handleDrop(setIosFile, setIosDragOver)}
-              onDragOver={handleDragOver(setIosDragOver)}
-              onDragLeave={handleDragLeave(setIosDragOver)}
+            <div className="form-group">
+              <label htmlFor="targetVersion">Target version</label>
+              <input
+                id="targetVersion"
+                type="text"
+                value={newTargetVersion}
+                onChange={(event) => setNewTargetVersion(event.target.value)}
+                placeholder="e.g. 1.5.x"
+              />
+            </div>
+          </div>
+          <div className="form-actions">
+            <button
+              className="btn-primary"
+              type="submit"
+              disabled={createBundleMutation.isPending}
             >
-              {iosFile ? (
-                <>
-                  <CheckCircle2
-                    size={24}
-                    className={styles.uploadZoneIconReady}
+              {createBundleMutation.isPending ? 'Creating...' : 'Save Bundle'}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {!bundles?.length ? (
+        <div className={styles.emptyState}>
+          <div className={styles.emptyIcon}>
+            <FolderOpen size={30} />
+          </div>
+          <h3>No bundles yet</h3>
+          <p>
+            Create the first bundle to upload OTA packages and publish releases.
+          </p>
+          <button
+            className="btn-primary"
+            onClick={() => setShowCreateForm(true)}
+          >
+            <Plus size={15} /> Create First Bundle
+          </button>
+        </div>
+      ) : (
+        <div className={styles.layoutGrid}>
+          <section className={styles.bundleListPanel}>
+            <h3>Bundles</h3>
+            <div className={styles.bundleList}>
+              {bundles.map((bundle) => (
+                <button
+                  key={bundle._id}
+                  type="button"
+                  className={`${styles.bundleRow} ${effectiveSelectedBundleId === bundle._id ? styles.bundleRowActive : ''}`}
+                  onClick={() => setSelectedBundleId(bundle._id)}
+                >
+                  <div>
+                    <strong>{bundle.name}</strong>
+                    <span>
+                      v{bundle.version} •{' '}
+                      {bundle.targetVersion || 'No target version'}
+                    </span>
+                  </div>
+                  {bundle.isReleased ? (
+                    <span className={styles.releasedBadge}>Released</span>
+                  ) : (
+                    <span className={styles.draftBadge}>Draft</span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </section>
+
+          {selectedBundle && (
+            <section className={styles.detailPanel}>
+              <div className={styles.detailHeader}>
+                <h3>{selectedBundle.name}</h3>
+                <p>Manage package files, target version, and release status.</p>
+              </div>
+
+              <div className={styles.editGrid}>
+                <div className="form-group">
+                  <label htmlFor="editBundleName">Bundle name</label>
+                  <input
+                    id="editBundleName"
+                    type="text"
+                    value={selectedDraft?.name ?? ''}
+                    onChange={(event) => {
+                      if (!selectedBundle) return;
+                      setBundleDrafts((prev) => ({
+                        ...prev,
+                        [selectedBundle._id]: {
+                          name: event.target.value,
+                          targetVersion:
+                            prev[selectedBundle._id]?.targetVersion ??
+                            selectedBundle.targetVersion ??
+                            '',
+                        },
+                      }));
+                    }}
                   />
-                  <span className={styles.uploadZoneTitle}>{iosFile.name}</span>
-                  <span className={styles.uploadZoneMeta}>
-                    {formatFileSize(iosFile.size)}
-                  </span>
-                  <div className={styles.uploadZoneActions}>
-                    <label
-                      className={styles.uploadZoneBtnSmall}
-                      htmlFor="ios-file"
-                    >
-                      <Replace size={12} /> Replace
-                    </label>
+                </div>
+                <div className="form-group">
+                  <label htmlFor="editTargetVersion">Target version</label>
+                  <input
+                    id="editTargetVersion"
+                    type="text"
+                    value={selectedDraft?.targetVersion ?? ''}
+                    onChange={(event) => {
+                      if (!selectedBundle) return;
+                      setBundleDrafts((prev) => ({
+                        ...prev,
+                        [selectedBundle._id]: {
+                          name:
+                            prev[selectedBundle._id]?.name ??
+                            selectedBundle.name,
+                          targetVersion: event.target.value,
+                        },
+                      }));
+                    }}
+                    placeholder="e.g. 1.5.x"
+                  />
+                </div>
+              </div>
+
+              <div className={styles.currentFiles}>
+                <div className={styles.fileStatusItem}>
+                  <span>Android</span>
+                  {selectedBundle.androidBundleUrl ? (
+                    <span className={styles.readyStatus}>
+                      <CheckCircle2 size={14} /> Uploaded
+                    </span>
+                  ) : (
+                    <span className={styles.pendingStatus}>Missing</span>
+                  )}
+                </div>
+                <div className={styles.fileStatusItem}>
+                  <span>iOS</span>
+                  {selectedBundle.iosBundleUrl ? (
+                    <span className={styles.readyStatus}>
+                      <CheckCircle2 size={14} /> Uploaded
+                    </span>
+                  ) : (
+                    <span className={styles.pendingStatus}>Missing</span>
+                  )}
+                </div>
+              </div>
+
+              <form className={styles.uploadForm} onSubmit={handleUpload}>
+                <div className={styles.uploadGrid}>
+                  <div
+                    className={`${styles.uploadZone} ${androidDragOver ? styles.uploadZoneDragOver : ''} ${androidFile ? styles.uploadZoneSelected : ''}`}
+                    onDrop={handleDrop(setAndroidFile, setAndroidDragOver)}
+                    onDragOver={handleDragOver(setAndroidDragOver)}
+                    onDragLeave={handleDragLeave(setAndroidDragOver)}
+                    onClick={() => androidInputRef.current?.click()}
+                  >
+                    <FileArchive size={18} />
+                    <strong>Android bundle (.zip)</strong>
+                    <span>
+                      {androidFile
+                        ? `${androidFile.name} (${formatFileSize(androidFile.size)})`
+                        : 'Drop file or click to select'}
+                    </span>
+                    <input
+                      ref={androidInputRef}
+                      type="file"
+                      accept=".zip"
+                      className={styles.hiddenInput}
+                      onChange={handleFileChange(setAndroidFile)}
+                    />
+                  </div>
+
+                  <div
+                    className={`${styles.uploadZone} ${iosDragOver ? styles.uploadZoneDragOver : ''} ${iosFile ? styles.uploadZoneSelected : ''}`}
+                    onDrop={handleDrop(setIosFile, setIosDragOver)}
+                    onDragOver={handleDragOver(setIosDragOver)}
+                    onDragLeave={handleDragLeave(setIosDragOver)}
+                    onClick={() => iosInputRef.current?.click()}
+                  >
+                    <FileArchive size={18} />
+                    <strong>iOS bundle (.zip)</strong>
+                    <span>
+                      {iosFile
+                        ? `${iosFile.name} (${formatFileSize(iosFile.size)})`
+                        : 'Drop file or click to select'}
+                    </span>
+                    <input
+                      ref={iosInputRef}
+                      type="file"
+                      accept=".zip"
+                      className={styles.hiddenInput}
+                      onChange={handleFileChange(setIosFile)}
+                    />
+                  </div>
+                </div>
+
+                <div className={styles.uploadActions}>
+                  <button
+                    type="submit"
+                    className="btn-secondary"
+                    disabled={
+                      uploadMutation.isPending || (!androidFile && !iosFile)
+                    }
+                  >
+                    <Upload size={15} />
+                    {uploadMutation.isPending ? 'Uploading...' : 'Upload Files'}
+                  </button>
+
+                  {(androidFile || iosFile) && (
                     <button
                       type="button"
-                      className={styles.uploadZoneClear}
-                      onClick={(e) => {
-                        e.stopPropagation();
+                      className="btn-secondary"
+                      onClick={() => {
+                        clearFile(setAndroidFile, androidInputRef);
                         clearFile(setIosFile, iosInputRef);
                       }}
                     >
-                      <X size={12} /> Remove
+                      <X size={14} /> Clear Selection
                     </button>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <FileArchive size={24} className={styles.uploadZoneIcon} />
-                  <span className={styles.uploadZoneTitle}>iOS Bundle</span>
-                  <span className={styles.uploadZoneMeta}>
-                    Drop .zip here or click to browse
-                  </span>
-                </>
-              )}
-              <input
-                ref={iosInputRef}
-                className={styles.hiddenInput}
-                id="ios-file"
-                type="file"
-                accept=".zip"
-                onChange={handleFileChange(setIosFile)}
-                onClick={(e) => e.stopPropagation()}
-              />
-            </div>
-          </div>
+                  )}
+                </div>
+              </form>
 
-          <div className={styles.uploadActions}>
-            <button
-              type="submit"
-              className="btn-primary"
-              disabled={uploadMutation.isPending || (!androidFile && !iosFile)}
-            >
-              <Upload size={16} />
-              {uploadMutation.isPending
-                ? 'Uploading...'
-                : filesReady === 2
-                  ? 'Replace Files'
-                  : 'Upload Files'}
-            </button>
-            {(androidFile || iosFile) && (
-              <span className={styles.uploadSummary}>
-                {[androidFile && 'Android', iosFile && 'iOS']
-                  .filter(Boolean)
-                  .join(' + ')}{' '}
-                selected
-              </span>
-            )}
-          </div>
-        </form>
-      </section>
+              <div className={styles.actionRow}>
+                <button
+                  type="button"
+                  className="btn-primary"
+                  onClick={handleSaveBundle}
+                  disabled={
+                    updateBundleMutation.isPending ||
+                    !selectedDraft?.name.trim()
+                  }
+                >
+                  <Save size={15} />
+                  {updateBundleMutation.isPending ? 'Saving...' : 'Save'}
+                </button>
+
+                <button
+                  type="button"
+                  className="btn-secondary"
+                  onClick={handleReleaseBundle}
+                  disabled={
+                    releaseMutation.isPending ||
+                    !selectedBundle.androidBundleUrl ||
+                    !selectedBundle.iosBundleUrl ||
+                    selectedBundle.isReleased
+                  }
+                >
+                  <Rocket size={15} />
+                  {selectedBundle.isReleased
+                    ? 'Released'
+                    : releaseMutation.isPending
+                      ? 'Releasing...'
+                      : 'Release'}
+                </button>
+
+                <button
+                  type="button"
+                  className={styles.deleteBtn}
+                  onClick={handleDeleteBundle}
+                  disabled={deleteBundleMutation.isPending}
+                >
+                  <Trash2 size={15} />
+                  Delete
+                </button>
+              </div>
+            </section>
+          )}
+        </div>
+      )}
     </div>
   );
 }
